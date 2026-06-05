@@ -6,195 +6,531 @@
   <title>LucasFlix</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          colors: { lf: { red: '#E50914', dark: '#141414' } },
+          colors: { lf: { red: '#E50914', dark: '#0a0a0a' } },
           fontFamily: { sans: ['Inter', 'sans-serif'] },
         }
       }
     }
   </script>
   <style>
-    body { background:#141414; color:#fff; font-family:'Inter',sans-serif; }
-    .scrollbar-hide { scrollbar-width:none; -ms-overflow-style:none; }
-    .scrollbar-hide::-webkit-scrollbar { display:none; }
+    :root {
+      --red: #E50914;
+      --bg: #0a0a0a;
+      --surface: #161616;
+      --surface2: #1f1f1f;
+      --border: rgba(255,255,255,0.07);
+    }
+
+    * { box-sizing: border-box; }
+    body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+
+    .scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+
     .clamp2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
     .clamp3 { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-    .fade-in { animation: fadeIn .3s ease; }
-    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+    /* ── Animations ── */
+    .fade-in  { animation: fadeIn .35s cubic-bezier(.4,0,.2,1) both; }
+    .slide-up { animation: slideUp .4s cubic-bezier(.4,0,.2,1) both; }
+    @keyframes fadeIn  { from { opacity:0 } to { opacity:1 } }
+    @keyframes slideUp { from { opacity:0; transform:translateY(20px) } to { opacity:1; transform:translateY(0) } }
+
+    /* ── Skeleton ── */
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.6s infinite;
+      border-radius: 6px;
+    }
+    @keyframes shimmer { from { background-position: 200% 0 } to { background-position: -200% 0 } }
+
+    /* ── Login ── */
+    .login-bg {
+      background: radial-gradient(ellipse 120% 80% at 50% 0%, rgba(229,9,20,.18) 0%, transparent 65%),
+                  radial-gradient(ellipse 80% 60% at 80% 100%, rgba(229,9,20,.08) 0%, transparent 60%),
+                  var(--bg);
+    }
+    .glass-card {
+      background: rgba(10,10,10,.72);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+    }
+    .input-field {
+      width: 100%;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      color: #fff;
+      font-size: .875rem;
+      padding: .75rem 1rem;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color .2s, background .2s;
+    }
+    .input-field::placeholder { color: rgba(255,255,255,.3); }
+    .input-field:focus {
+      border-color: var(--red);
+      background: rgba(255,255,255,.09);
+    }
+
+    /* ── Navbar ── */
+    #navbar {
+      transition: background .3s, backdrop-filter .3s;
+    }
+    #navbar.scrolled {
+      background: rgba(10,10,10,.95) !important;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Hero ── */
+    .hero-gradient-v {
+      background: linear-gradient(to top,
+        var(--bg) 0%,
+        rgba(10,10,10,.85) 20%,
+        rgba(10,10,10,.4) 50%,
+        transparent 100%
+      );
+    }
+    .hero-gradient-h {
+      background: linear-gradient(to right,
+        rgba(10,10,10,.95) 0%,
+        rgba(10,10,10,.6) 40%,
+        transparent 70%
+      );
+    }
+
+    /* ── Cards ── */
+    .card-wrap {
+      position: relative;
+      flex: none;
+      width: 140px;
+      cursor: pointer;
+      transition: transform .25s cubic-bezier(.4,0,.2,1);
+    }
+    @media (min-width: 768px) { .card-wrap { width: 168px; } }
+    .card-wrap:hover { transform: translateY(-4px) scale(1.03); z-index: 2; }
+
+    .card-img-wrap {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      aspect-ratio: 2/3;
+      background: var(--surface);
+    }
+    .card-img-wrap img {
+      width:100%; height:100%; object-fit:cover;
+      transition: transform .35s cubic-bezier(.4,0,.2,1);
+    }
+    .card-wrap:hover .card-img-wrap img { transform: scale(1.07); }
+
+    .card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.2) 50%, transparent 100%);
+      opacity: 0;
+      transition: opacity .25s;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .card-wrap:hover .card-overlay { opacity: 1; }
+
+    .card-play-btn {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,.95);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 6px;
+      transform: scale(.8);
+      transition: transform .2s;
+    }
+    .card-wrap:hover .card-play-btn { transform: scale(1); }
+
+    .rating-badge {
+      position: absolute; top: 6px; left: 6px;
+      background: rgba(0,0,0,.75);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 4px;
+      padding: 2px 5px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #fbbf24;
+      display: flex; align-items: center; gap: 3px;
+      line-height: 1;
+    }
+
+    .type-badge {
+      position: absolute; top: 6px; right: 6px;
+      background: rgba(229,9,20,.85);
+      border-radius: 4px;
+      padding: 2px 5px;
+      font-size: 9px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    /* ── Row arrows ── */
+    .row-arrow {
+      position: absolute; top: 0; bottom: 20px; z-index: 10;
+      width: 48px;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      transition: opacity .2s;
+      cursor: pointer;
+      border: none; background: transparent;
+    }
+    .row-arrow-left  { left: 0;  background: linear-gradient(to right, rgba(10,10,10,.9), transparent); }
+    .row-arrow-right { right: 0; background: linear-gradient(to left,  rgba(10,10,10,.9), transparent); }
+    .row-group:hover .row-arrow { opacity: 1; }
+    .row-arrow svg { filter: drop-shadow(0 0 6px rgba(0,0,0,.8)); }
+
+    /* ── Genre pills ── */
+    .genre-pill {
+      flex: none;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.15);
+      color: rgba(255,255,255,.6);
+      white-space: nowrap;
+      transition: all .18s;
+      cursor: pointer;
+      background: transparent;
+    }
+    .genre-pill:hover {
+      border-color: rgba(255,255,255,.4);
+      color: #fff;
+      background: rgba(255,255,255,.06);
+    }
+    .genre-pill.active {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+      font-weight: 700;
+    }
+
+    /* ── Player bar ── */
+    .player-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,.8);
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.08);
+      transition: all .15s;
+      cursor: pointer;
+    }
+    .player-btn:hover {
+      background: rgba(255,255,255,.14);
+      color: #fff;
+      border-color: rgba(255,255,255,.15);
+    }
+
+    /* ── Hero buttons ── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #fff;
+      color: #000;
+      font-weight: 700;
+      font-size: .9rem;
+      padding: 10px 24px;
+      border-radius: 6px;
+      transition: background .15s, transform .15s;
+      border: none; cursor: pointer;
+    }
+    .btn-primary:hover { background: rgba(255,255,255,.85); transform: translateY(-1px); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(109,109,110,.7);
+      color: #fff;
+      font-weight: 600;
+      font-size: .9rem;
+      padding: 10px 24px;
+      border-radius: 6px;
+      transition: background .15s, transform .15s;
+      border: none; cursor: pointer;
+      backdrop-filter: blur(4px);
+    }
+    .btn-secondary:hover { background: rgba(109,109,110,.5); transform: translateY(-1px); }
+
+    /* ── Search ── */
+    .search-expand {
+      max-width: 0;
+      overflow: hidden;
+      transition: max-width .3s cubic-bezier(.4,0,.2,1), opacity .2s;
+      opacity: 0;
+    }
+    .search-expand.open {
+      max-width: 280px;
+      opacity: 1;
+    }
+
+    /* ── Pagination ── */
+    .page-btn {
+      min-width: 36px; height: 36px;
+      border-radius: 6px;
+      font-size: 13px; font-weight: 600;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all .15s;
+      cursor: pointer; border: none;
+    }
+
+    /* ── Episode sidebar ── */
+    .ep-btn {
+      width: 100%;
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+      transition: background .15s;
+      background: transparent;
+      border-left: 3px solid transparent;
+      cursor: pointer;
+    }
+    .ep-btn:hover { background: rgba(255,255,255,.05); }
+    .ep-btn.active {
+      background: rgba(255,255,255,.07);
+      border-left-color: var(--red);
+    }
   </style>
 </head>
 <body>
 
-<!-- ── LOGIN ──────────────────────────────────────────────────────── -->
-<div id="login-screen" class="fixed inset-0 z-[300] bg-[#141414] flex items-center justify-center p-6">
-  <div class="w-full max-w-sm">
-    <div class="flex justify-center mb-8">
-      <svg viewBox="0 0 695.71 330" width="320" role="img" xmlns="http://www.w3.org/2000/svg">
-        <rect x="0" y="0" width="680" height="320" fill="#141414" rx="12"/>
-        <defs>
-          <linearGradient id="ls2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#000" stop-opacity="0.6"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></linearGradient>
-          <linearGradient id="rs2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity="0.6"/></linearGradient>
-        </defs>
-        <text x="340" y="210" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="108" font-weight="700" fill="#E50914" letter-spacing="2">LUCASFLIX</text>
-        <rect x="0" y="0" width="80" height="320" fill="url(#ls2)" rx="12"/>
-        <rect x="600" y="0" width="80" height="320" fill="url(#rs2)" rx="12"/>
-        <text x="340" y="265" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="400" fill="#888" letter-spacing="6">ASSISTA SEM LIMITES</text>
+<!-- ── LOGIN ───────────────────────────────────────────────────── -->
+<div id="login-screen" class="fixed inset-0 z-[300] login-bg flex items-center justify-center p-6">
+  <div class="w-full max-w-[360px] slide-up">
+
+    <div class="flex justify-center mb-10">
+      <svg viewBox="0 0 700 120" width="260" height="42" xmlns="http://www.w3.org/2000/svg">
+        <text x="350" y="105" text-anchor="middle" font-family="Georgia,'Times New Roman',serif"
+          font-size="108" font-weight="700" fill="#E50914" letter-spacing="3">LUCASFLIX</text>
       </svg>
     </div>
-    <div class="bg-black/60 rounded-xl p-8">
-      <h2 class="text-white text-2xl font-bold mb-6">Entrar</h2>
-      <div class="flex flex-col gap-4">
+
+    <div class="glass-card rounded-2xl p-8">
+      <h2 class="text-white text-xl font-bold mb-1">Bem-vindo de volta</h2>
+      <p class="text-white/40 text-sm mb-7">Entre para continuar assistindo</p>
+
+      <div class="flex flex-col gap-3">
         <div>
-          <input id="login-user" type="text" placeholder="Usuário"
+          <label class="block text-xs text-white/40 font-medium mb-1.5 ml-1">Usuário</label>
+          <input id="login-user" type="text" placeholder="Digite seu usuário"
             autocomplete="username"
-            class="w-full bg-[#333] border border-transparent focus:border-[#E50914] text-white text-sm px-4 py-3 rounded outline-none transition-colors placeholder-gray-500"
+            class="input-field"
             onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()" />
         </div>
-        <div class="relative">
-          <input id="login-pass" type="password" placeholder="Senha"
+        <div>
+          <label class="block text-xs text-white/40 font-medium mb-1.5 ml-1">Senha</label>
+          <input id="login-pass" type="password" placeholder="Digite sua senha"
             autocomplete="current-password"
-            class="w-full bg-[#333] border border-transparent focus:border-[#E50914] text-white text-sm px-4 py-3 rounded outline-none transition-colors placeholder-gray-500"
+            class="input-field"
             onkeydown="if(event.key==='Enter')doLogin()" />
         </div>
-        <p id="login-error" class="hidden text-[#E50914] text-xs text-center">Usuário ou senha incorretos.</p>
+
+        <p id="login-error" class="hidden text-[#E50914] text-xs text-center py-1 bg-red-500/10 rounded-md">
+          Usuário ou senha incorretos
+        </p>
+
         <button onclick="doLogin()"
-          class="w-full bg-[#E50914] text-white font-bold py-3 rounded hover:bg-red-700 transition-colors mt-2">
+          class="w-full mt-2 bg-[#E50914] hover:bg-red-600 active:bg-red-700 text-white font-bold py-3 rounded-lg transition-all duration-150 text-sm tracking-wide">
           Entrar
         </button>
       </div>
     </div>
+
+    <p class="text-center text-white/20 text-xs mt-6">LucasFlix — Assista sem limites</p>
   </div>
 </div>
 
 
 <!-- ── NAVBAR ──────────────────────────────────────────────────── -->
-<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-gradient-to-b from-black/80 to-transparent">
-  <div class="flex items-center justify-between px-4 md:px-12 py-4">
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50" style="background:linear-gradient(to bottom,rgba(10,10,10,.9),transparent)">
+  <div class="flex items-center justify-between px-5 md:px-12 h-16">
+
     <div class="flex items-center gap-8">
-      <button onclick="showHome()" class="shrink-0">
-        <svg viewBox="0 120 696 110" width="150" height="38" role="img" xmlns="http://www.w3.org/2000/svg">
-          <text x="348" y="210" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="108" font-weight="700" fill="#E50914" letter-spacing="2">LUCASFLIX</text>
+      <button onclick="showHome()" class="shrink-0 flex items-center">
+        <svg viewBox="0 0 700 120" width="130" height="28" xmlns="http://www.w3.org/2000/svg">
+          <text x="350" y="105" text-anchor="middle" font-family="Georgia,'Times New Roman',serif"
+            font-size="108" font-weight="700" fill="#E50914" letter-spacing="3">LUCASFLIX</text>
         </svg>
       </button>
-      <div class="hidden md:flex items-center gap-6 text-sm text-gray-300">
-        <button onclick="showHome()" class="hover:text-white transition-colors">Início</button>
-        <button onclick="browseType('movie')" class="hover:text-white transition-colors">Filmes</button>
-        <button onclick="browseType('tv')" class="hover:text-white transition-colors">Séries</button>
-        <button onclick="browseType('anime')" class="hover:text-white transition-colors">Animes</button>
+
+      <div class="hidden md:flex items-center gap-1 text-sm">
+        <button onclick="showHome()" class="nav-link px-3 py-1.5 rounded-md text-white/70 hover:text-white hover:bg-white/8 transition-all">Início</button>
+        <button onclick="browseType('movie')" class="nav-link px-3 py-1.5 rounded-md text-white/70 hover:text-white hover:bg-white/8 transition-all">Filmes</button>
+        <button onclick="browseType('tv')" class="nav-link px-3 py-1.5 rounded-md text-white/70 hover:text-white hover:bg-white/8 transition-all">Séries</button>
+        <button onclick="browseType('anime')" class="nav-link px-3 py-1.5 rounded-md text-white/70 hover:text-white hover:bg-white/8 transition-all">Animes</button>
       </div>
     </div>
-    <div class="flex items-center gap-4">
-      <div id="search-wrapper" class="flex items-center">
-        <input id="search-input" type="text" placeholder="Buscar títulos..."
-          class="hidden bg-black/80 border border-white/60 text-white text-sm px-3 py-1.5 rounded mr-2 w-48 md:w-64 outline-none"
-          onkeydown="if(event.key==='Enter')doSearch()" onblur="closeSearch()" />
-        <button onclick="toggleSearch()" class="text-white hover:text-gray-300 transition-colors">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/></svg>
+
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <div class="search-expand" id="search-expand-wrap">
+          <input id="search-input" type="text" placeholder="Títulos, séries, filmes…"
+            class="input-field !py-2 !text-xs w-64"
+            onkeydown="if(event.key==='Enter')doSearch();if(event.key==='Escape')closeSearch()"
+            onblur="closeSearch()" />
+        </div>
+        <button onclick="toggleSearch()" class="w-9 h-9 flex items-center justify-center rounded-lg text-white/70 hover:text-white hover:bg-white/8 transition-all">
+          <svg class="w-4.5 h-4.5 w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+          </svg>
         </button>
       </div>
-      <div class="w-8 h-8 rounded bg-[#E50914] flex items-center justify-center text-white text-xs font-bold select-none">L</div>
+
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E50914] to-red-800 flex items-center justify-center text-white text-xs font-black select-none shadow-lg shadow-red-900/40">
+        L
+      </div>
     </div>
   </div>
 </nav>
 
 <!-- ── GENRE BAR ────────────────────────────────────────────────── -->
-<div id="genre-bar" class="fixed top-[64px] left-0 right-0 z-40 bg-[#141414]/95 backdrop-blur border-b border-white/5">
-  <div class="px-4 md:px-12 pt-2 pb-1 flex items-center gap-3">
+<div id="genre-bar" class="fixed top-16 left-0 right-0 z-40" style="background:rgba(10,10,10,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06)">
+  <div class="px-5 md:px-12 pt-2.5 pb-1.5 flex items-center gap-2">
     <button id="gtab-movie" onclick="setGenreTab('movie')"
-      class="text-xs font-bold px-3 py-1 rounded-full border transition-colors border-[#E50914] text-white bg-[#E50914]">
+      class="text-[11px] font-bold px-3.5 py-1 rounded-full border transition-all border-[#E50914] text-white bg-[#E50914]">
       Filmes
     </button>
     <button id="gtab-tv" onclick="setGenreTab('tv')"
-      class="text-xs font-bold px-3 py-1 rounded-full border transition-colors border-white/20 text-gray-400">
+      class="text-[11px] font-bold px-3.5 py-1 rounded-full border transition-all border-white/15 text-white/45">
       Séries
     </button>
+    <div class="w-px h-4 bg-white/10 mx-1"></div>
+    <div id="genre-pills" class="flex gap-1.5 overflow-x-auto scrollbar-hide pb-0.5"></div>
   </div>
-  <div id="genre-pills" class="flex gap-2 overflow-x-auto scrollbar-hide px-4 md:px-12 pb-2 pt-1"></div>
 </div>
 
 <!-- ── HOME VIEW ───────────────────────────────────────────────── -->
 <div id="view-home">
+
   <!-- Hero -->
-  <div id="hero" class="relative w-full h-[85vh] min-h-[500px] overflow-hidden bg-gray-900">
-    <img id="hero-img" src="" alt="" class="absolute inset-0 w-full h-full object-cover object-top" />
-    <div class="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/30 to-transparent"></div>
-    <div class="absolute inset-0 bg-gradient-to-r from-[#141414]/70 to-transparent"></div>
-    <div class="relative h-full flex flex-col justify-end pb-24 px-8 md:px-16 max-w-2xl">
-      <h1 id="hero-title" class="text-4xl md:text-6xl font-black text-white mb-4 leading-tight drop-shadow-2xl"></h1>
-      <p id="hero-overview" class="text-sm md:text-base text-gray-200 mb-6 clamp3 leading-relaxed drop-shadow"></p>
-      <div class="flex items-center gap-3">
-        <button id="hero-play" onclick="" class="flex items-center gap-2 bg-white text-black font-bold px-6 py-2.5 rounded hover:bg-gray-200 transition-colors">
+  <div id="hero" class="relative w-full h-[92vh] min-h-[560px] overflow-hidden" style="background:var(--bg)">
+    <img id="hero-img" src="" alt="" class="absolute inset-0 w-full h-full object-cover object-top transition-opacity duration-700" />
+    <div class="hero-gradient-h absolute inset-0"></div>
+    <div class="hero-gradient-v absolute inset-0"></div>
+    <!-- subtle top shadow for navbar legibility -->
+    <div class="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#0a0a0a]/60 to-transparent"></div>
+
+    <div class="relative h-full flex flex-col justify-end pb-28 px-8 md:px-16 max-w-[680px]">
+      <div id="hero-badges" class="flex items-center gap-2 mb-4"></div>
+      <h1 id="hero-title" class="text-5xl md:text-[3.75rem] font-black text-white mb-4 leading-[1.05] tracking-tight drop-shadow-2xl"></h1>
+      <p id="hero-overview" class="text-sm md:text-[.95rem] text-white/70 mb-6 clamp3 leading-relaxed max-w-[520px]"></p>
+      <div class="flex items-center gap-3 flex-wrap">
+        <button id="hero-play" class="btn-primary">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           Assistir
         </button>
+        <button id="hero-info" class="btn-secondary">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Mais Info
+        </button>
       </div>
-      <div id="hero-meta" class="flex items-center gap-3 mt-4 text-sm text-gray-300"></div>
+      <div id="hero-meta" class="flex items-center gap-3 mt-5 text-sm text-white/50"></div>
     </div>
   </div>
 
   <!-- Rows -->
-  <div id="rows" class="mt-[-80px] relative z-10 pb-12"></div>
+  <div id="rows" class="mt-[-100px] relative z-10 pb-16 space-y-2"></div>
 </div>
 
 <!-- ── SEARCH VIEW ─────────────────────────────────────────────── -->
-<div id="view-search" class="hidden pt-36 pb-12 px-4 md:px-12 fade-in">
-  <h1 id="search-title" class="text-white text-2xl font-bold mb-6"></h1>
-  <div id="search-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3"></div>
-  <div id="search-loading" class="hidden flex justify-center py-10">
-    <div class="w-8 h-8 border-2 border-[#E50914] border-t-transparent rounded-full animate-spin"></div>
+<div id="view-search" class="hidden pt-[148px] pb-16 px-5 md:px-12 fade-in">
+  <div class="flex items-baseline gap-3 mb-8">
+    <h1 id="search-title" class="text-white text-2xl font-bold"></h1>
+    <span id="search-count" class="text-white/30 text-sm"></span>
   </div>
-  <div id="pagination" class="hidden flex flex-wrap justify-center gap-1 mt-8"></div>
+  <div id="search-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4"></div>
+  <div id="search-loading" class="hidden flex-col items-center gap-4 py-16">
+    <div class="w-10 h-10 border-2 border-[#E50914] border-t-transparent rounded-full animate-spin"></div>
+    <p class="text-white/30 text-sm">Buscando...</p>
+  </div>
+  <div id="search-empty" class="hidden flex-col items-center gap-3 py-20">
+    <svg class="w-14 h-14 text-white/10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+    </svg>
+    <p class="text-white/30 text-sm">Nenhum resultado encontrado</p>
+  </div>
+  <div id="pagination" class="hidden flex-wrap justify-center gap-1.5 mt-10"></div>
 </div>
 
 <!-- ── PLAYER VIEW ─────────────────────────────────────────────── -->
 <div id="view-player" class="hidden fixed inset-0 z-[100] bg-black flex flex-col fade-in">
-  <div class="flex items-center gap-3 px-4 py-3 bg-black/90 shrink-0">
-    <button onclick="closePlayer()" class="text-white hover:text-gray-300 transition-colors">
-      <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+
+  <div class="flex items-center gap-3 px-4 py-2.5 shrink-0" style="background:rgba(0,0,0,.92);border-bottom:1px solid rgba(255,255,255,.06);min-height:52px">
+    <button onclick="closePlayer()" class="w-8 h-8 flex items-center justify-center rounded-lg text-white/60 hover:text-white hover:bg-white/8 transition-all shrink-0">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+      </svg>
     </button>
-    <svg onclick="closePlayer()" style="cursor:pointer" viewBox="0 120 696 110" width="120" height="30" role="img" xmlns="http://www.w3.org/2000/svg" class="shrink-0">
-      <text x="348" y="210" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="108" font-weight="700" fill="#E50914" letter-spacing="2">LUCASFLIX</text>
+
+    <svg viewBox="0 0 700 120" width="100" height="22" xmlns="http://www.w3.org/2000/svg" class="shrink-0 cursor-pointer" onclick="closePlayer()">
+      <text x="350" y="105" text-anchor="middle" font-family="Georgia,'Times New Roman',serif"
+        font-size="108" font-weight="700" fill="#E50914" letter-spacing="3">LUCASFLIX</text>
     </svg>
-    <span id="player-title" class="text-white text-sm truncate"></span>
+
+    <div class="w-px h-4 bg-white/10 shrink-0"></div>
+    <span id="player-title" class="text-white/70 text-xs truncate flex-1 min-w-0"></span>
+
     <div class="ml-auto flex items-center gap-2 shrink-0">
-      <button onclick="toggleSource()" id="source-btn"
-        class="flex items-center gap-1.5 bg-white/10 text-white text-sm px-3 py-1.5 rounded hover:bg-white/20 transition-colors">
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+      <button onclick="toggleSource()" id="source-btn" class="player-btn">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+        </svg>
         <span id="source-label">SuperFlix</span>
       </button>
-      <button onclick="reloadPlayer()"
-        class="flex items-center gap-1.5 bg-white/10 text-white text-sm px-3 py-1.5 rounded hover:bg-white/20 transition-colors">
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582M20 20v-5h-.581M5.635 19A9 9 0 1 0 4.582 9"/></svg>
+      <button onclick="reloadPlayer()" class="player-btn">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582M20 20v-5h-.581M5.635 19A9 9 0 1 0 4.582 9"/>
+        </svg>
         Recarregar
       </button>
-      <button id="fullscreen-btn" onclick="toggleFullscreen()"
-        class="flex items-center gap-1.5 bg-white/10 text-white text-sm px-3 py-1.5 rounded hover:bg-white/20 transition-colors">
-        <svg id="fullscreen-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-5V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+      <button id="fullscreen-btn" onclick="toggleFullscreen()" class="player-btn">
+        <svg id="fullscreen-icon" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-5V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+        </svg>
         <span id="fullscreen-label">Tela cheia</span>
       </button>
+      <button id="episodes-toggle-btn" onclick="toggleEpisodes()" class="hidden player-btn !bg-[#E50914]/15 !border-[#E50914]/20 !text-[#E50914] hover:!bg-[#E50914]/25 shrink-0">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        Episódios
+      </button>
     </div>
-    <button id="episodes-toggle-btn" onclick="toggleEpisodes()" class="hidden items-center gap-1.5 bg-white/10 text-white text-sm px-3 py-1.5 rounded hover:bg-white/20 transition-colors shrink-0">
-      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-      Episódios
-    </button>
   </div>
+
   <div class="flex flex-1 overflow-hidden">
     <div class="flex-1 relative">
-      <iframe id="player-iframe" src="" class="w-full h-full min-h-[calc(100vh-56px)]"
+      <iframe id="player-iframe" src="" class="w-full h-full min-h-[calc(100vh-52px)]"
         allowfullscreen
         allow="autoplay *; encrypted-media *; picture-in-picture *; fullscreen *; clipboard-write *; accelerometer *; gyroscope *"
         referrerpolicy="no-referrer"
         title="Player"></iframe>
     </div>
-    <div id="episodes-sidebar" class="hidden w-72 md:w-80 h-[calc(100vh-56px)] overflow-hidden border-l border-white/10 shrink-0 flex flex-col bg-[#181818]">
-      <div class="p-4 border-b border-white/10">
-        <h3 class="text-white font-semibold text-sm mb-3">Episódios</h3>
+
+    <div id="episodes-sidebar" class="hidden w-72 md:w-80 h-[calc(100vh-52px)] overflow-hidden shrink-0 flex flex-col"
+      style="background:var(--surface);border-left:1px solid rgba(255,255,255,.06)">
+      <div class="p-4" style="border-bottom:1px solid rgba(255,255,255,.06)">
+        <p class="text-white/40 text-[10px] font-semibold uppercase tracking-widest mb-2">Temporada</p>
         <select id="season-select" onchange="changeSeason(this.value)"
-          class="bg-black border border-white/20 text-white text-sm rounded px-3 py-1.5 w-full outline-none"></select>
+          class="w-full text-white text-sm rounded-lg px-3 py-2 outline-none"
+          style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)"></select>
       </div>
       <div id="episodes-list" class="flex-1 overflow-y-auto scrollbar-hide"></div>
     </div>
@@ -202,20 +538,20 @@
 </div>
 
 <!-- ── MODAL ───────────────────────────────────────────────────── -->
-<div id="modal" class="hidden fixed inset-0 z-[150] bg-black/70 flex items-center justify-center p-4 fade-in" onclick="closeModalOutside(event)">
-  <div class="bg-[#181818] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+<div id="modal" class="hidden fixed inset-0 z-[150] bg-black/80 flex items-center justify-center p-4 fade-in" onclick="closeModalOutside(event)" style="backdrop-filter:blur(6px)">
+  <div class="rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl" style="background:var(--surface);border:1px solid rgba(255,255,255,.08)">
     <div class="relative">
-      <img id="modal-backdrop" src="" alt="" class="w-full aspect-video object-cover rounded-t-lg" />
-      <div class="absolute inset-0 bg-gradient-to-t from-[#181818] via-transparent to-transparent rounded-t-lg"></div>
-      <button onclick="closeModal()" class="absolute top-3 right-3 bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition-colors text-sm">✕</button>
-      <div class="absolute bottom-4 left-5">
-        <button id="modal-play-btn" onclick="" class="flex items-center gap-2 bg-white text-black font-bold px-5 py-2 rounded hover:bg-gray-200 transition-colors text-sm">
+      <img id="modal-backdrop" src="" alt="" class="w-full aspect-video object-cover rounded-t-2xl" />
+      <div class="absolute inset-0 bg-gradient-to-t from-[#161616] via-transparent to-transparent rounded-t-2xl"></div>
+      <button onclick="closeModal()" class="absolute top-3 right-3 bg-black/60 backdrop-blur text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition-colors text-sm" style="border:1px solid rgba(255,255,255,.1)">✕</button>
+      <div class="absolute bottom-5 left-5 flex gap-2">
+        <button id="modal-play-btn" class="btn-primary !text-sm !px-4 !py-2">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           Assistir
         </button>
       </div>
     </div>
-    <div id="modal-body" class="p-5"></div>
+    <div id="modal-body" class="p-6"></div>
   </div>
 </div>
 
@@ -228,16 +564,14 @@ const SOURCES = {
   warez:     'https://warezcdn.lat',
 }
 let activeSource = 'superflix'
-
 let TMDB_KEY = '4009df1288679d1a0374fe0a0e0f8419'
 
 // ── STATE ─────────────────────────────────────────────────────────
 let currentView = 'home'
 let searchState = { query: '', type: '', page: 1, totalPages: 1 }
-let tvState = { id: 0, season: 1, episode: 1, details: null }
+let tvState     = { id: 0, season: 1, episode: 1, details: null }
 let playerState = { type: '', imdbId: '', tvId: 0 }
 let cache = {}
-
 
 // ── TMDB API ──────────────────────────────────────────────────────
 async function api(path, params = {}) {
@@ -257,7 +591,6 @@ async function api(path, params = {}) {
 function imgUrl(path, size = 'w500') {
   return path ? `${TMDB_IMG}/${size}${path}` : ''
 }
-
 function getTitle(c) { return c.title || c.name || 'Sem título' }
 function getYear(c)  { const d = c.release_date || c.first_air_date; return d ? d.slice(0,4) : '' }
 function getType(c)  { return (c.media_type === 'movie' || c.title) ? 'movie' : 'tv' }
@@ -265,6 +598,8 @@ function getType(c)  { return (c.media_type === 'movie' || c.title) ? 'movie' : 
 // ── INIT ──────────────────────────────────────────────────────────
 async function init() {
   showView('home')
+  renderRowSkeletons()
+
   const [trending, movies, series, topRated, nowPlaying, animes] = await Promise.all([
     api('/trending/all/week'),
     api('/movie/popular'),
@@ -275,51 +610,80 @@ async function init() {
   ])
 
   const heroItems = trending.results.filter(c => c.media_type !== 'person')
-  const hero = heroItems[Math.floor(Math.random() * Math.min(5, heroItems.length))]
-  renderHero(hero)
+  renderHero(heroItems[Math.floor(Math.random() * Math.min(5, heroItems.length))])
 
   const rows = document.getElementById('rows')
   rows.innerHTML = ''
-  renderRow('Em Alta', trending.results.filter(c=>c.media_type!=='person'), rows)
-  renderRow('Filmes Populares', movies.results, rows, 'movie')
-  renderRow('Em Cartaz', nowPlaying.results, rows, 'movie')
-  renderRow('Séries Populares', series.results, rows, 'tv')
-  renderRow('Mais Bem Avaliados', topRated.results, rows, 'movie')
-  renderRow('Animes', animes.results, rows, 'tv')
+  renderRow('Em Alta esta Semana', trending.results.filter(c=>c.media_type!=='person'), rows)
+  renderRow('Filmes Populares',    movies.results,   rows, 'movie')
+  renderRow('Em Cartaz nos Cinemas', nowPlaying.results, rows, 'movie')
+  renderRow('Séries Populares',    series.results,   rows, 'tv')
+  renderRow('Mais Bem Avaliados',  topRated.results, rows, 'movie')
+  renderRow('Animes',              animes.results,   rows, 'tv')
+}
+
+function renderRowSkeletons() {
+  const rows = document.getElementById('rows')
+  rows.innerHTML = Array.from({length: 3}).map(() => `
+    <div class="mb-10 px-5 md:px-12">
+      <div class="skeleton h-5 w-40 mb-4 rounded"></div>
+      <div class="flex gap-3 overflow-hidden">
+        ${Array.from({length: 8}).map(() => `
+          <div class="flex-none w-[140px] md:w-[168px]">
+            <div class="skeleton rounded-lg" style="aspect-ratio:2/3"></div>
+          </div>`).join('')}
+      </div>
+    </div>`).join('')
 }
 
 // ── HERO ──────────────────────────────────────────────────────────
 function renderHero(c) {
   const type = getType(c)
-  document.getElementById('hero-img').src = imgUrl(c.backdrop_path, 'original')
+  const img = document.getElementById('hero-img')
+  img.style.opacity = '0'
+  img.src = imgUrl(c.backdrop_path, 'original')
+  img.onload = () => { img.style.opacity = '1' }
+
   document.getElementById('hero-title').textContent = getTitle(c)
   document.getElementById('hero-overview').textContent = c.overview || ''
   document.getElementById('hero-play').onclick = () => openPlayer(c.id, type)
-  document.getElementById('hero-meta').innerHTML =
-    `<span class="border border-gray-400 px-2 py-0.5 text-xs">${c.adult?'+18':'LIVRE'}</span>
-     ${getYear(c)?`<span>${getYear(c)}</span>`:''}
-     <span class="flex items-center gap-1">
-       <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-       ${c.vote_average.toFixed(1)}
-     </span>`
+  document.getElementById('hero-info').onclick = () => openPlayer(c.id, type)
+
+  const rating = c.vote_average ? c.vote_average.toFixed(1) : null
+  document.getElementById('hero-badges').innerHTML = `
+    <span style="background:rgba(229,9,20,.15);border:1px solid rgba(229,9,20,.3);color:#ff6b6b;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em">
+      ${type === 'movie' ? 'FILME' : 'SÉRIE'}
+    </span>
+    ${rating ? `<span style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);color:#fbbf24;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:flex;align-items:center;gap:4px">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      ${rating}
+    </span>` : ''}`
+
+  document.getElementById('hero-meta').innerHTML = `
+    ${getYear(c) ? `<span>${getYear(c)}</span><span class="w-1 h-1 rounded-full bg-white/30 inline-block"></span>` : ''}
+    <span class="border border-white/20 px-1.5 py-0.5 text-[10px] rounded font-medium">${c.adult ? '+18' : 'LIVRE'}</span>`
 }
 
 // ── ROWS ──────────────────────────────────────────────────────────
 function renderRow(title, items, container, forcedType) {
   if (!items.length) return
   const row = document.createElement('div')
-  row.className = 'relative mb-8 group'
+  row.className = 'row-group relative mb-2 py-6'
   row.innerHTML = `
-    <h2 class="text-white font-semibold text-lg md:text-xl mb-3 px-4 md:px-12">${title}</h2>
+    <h2 class="text-white font-semibold text-base md:text-lg mb-4 px-5 md:px-12 tracking-[-0.01em]">${title}</h2>
     <div class="relative">
-      <button onclick="scrollRow(this,-1)" class="absolute left-0 top-0 bottom-4 z-10 w-10 bg-gradient-to-r from-[#141414] to-transparent flex items-center pl-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      <button onclick="scrollRow(this,-1)" class="row-arrow row-arrow-left">
+        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+        </svg>
       </button>
-      <div class="row-track flex gap-2 overflow-x-auto scroll-smooth px-4 md:px-12 pb-4 scrollbar-hide">
+      <div class="row-track flex gap-3 overflow-x-auto scroll-smooth px-5 md:px-12 pb-2 scrollbar-hide">
         ${items.map(c => cardHTML(c, forcedType)).join('')}
       </div>
-      <button onclick="scrollRow(this,1)" class="absolute right-0 top-0 bottom-4 z-10 w-10 bg-gradient-to-l from-[#141414] to-transparent flex items-center justify-end pr-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      <button onclick="scrollRow(this,1)" class="row-arrow row-arrow-right">
+        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+        </svg>
       </button>
     </div>`
   container.appendChild(row)
@@ -327,28 +691,35 @@ function renderRow(title, items, container, forcedType) {
 
 function scrollRow(btn, dir) {
   const track = btn.closest('.relative').querySelector('.row-track')
-  track.scrollBy({ left: dir * track.clientWidth * 0.75, behavior: 'smooth' })
+  track.scrollBy({ left: dir * track.clientWidth * 0.8, behavior: 'smooth' })
 }
 
 function cardHTML(c, forcedType) {
-  const type = forcedType || getType(c)
+  const type  = forcedType || getType(c)
   const poster = imgUrl(c.poster_path, 'w342')
-  const title = getTitle(c)
-  const year = getYear(c)
+  const title  = getTitle(c)
+  const year   = getYear(c)
+  const rating = c.vote_average ? c.vote_average.toFixed(1) : null
+  const typeLabel = type === 'movie' ? 'FILME' : 'SÉRIE'
+
   const img = poster
-    ? `<img src="${poster}" alt="${title}" class="w-full h-full object-cover transition-transform duration-300 group-hover/card:scale-110" loading="lazy" onerror="this.style.display='none'">`
-    : `<div class="w-full h-full flex items-center justify-center text-gray-500 text-xs text-center p-2">${title}</div>`
+    ? `<img src="${poster}" alt="${title}" loading="lazy" onerror="this.parentElement.innerHTML='<div style=width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:8px;color:rgba(255,255,255,.2);font-size:11px;text-align:center>${title}</div>'">`
+    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:8px;color:rgba(255,255,255,.2);font-size:11px;text-align:center">${title}</div>`
 
   return `
-    <div onclick="openPlayer(${c.id},'${type}')" class="relative flex-none w-32 md:w-40 cursor-pointer group/card">
-      <div class="overflow-hidden rounded-md aspect-[2/3] bg-gray-800">
+    <div onclick="openPlayer(${c.id},'${type}')" class="card-wrap">
+      <div class="card-img-wrap">
         ${img}
-        <div class="absolute inset-0 bg-black/0 group-hover/card:bg-black/40 transition-all duration-300 rounded-md flex items-center justify-center">
-          <svg class="w-12 h-12 text-white opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        ${rating ? `<div class="rating-badge"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>${rating}</div>` : ''}
+        <div class="card-overlay">
+          <div class="card-play-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#000"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+          <p style="font-size:11px;font-weight:600;color:#fff;line-height:1.3;margin:0">${title}</p>
+          ${year ? `<p style="font-size:10px;color:rgba(255,255,255,.5);margin:2px 0 0">${year}</p>` : ''}
         </div>
       </div>
-      <p class="mt-1.5 text-xs text-gray-300 truncate">${title}</p>
-      ${year ? `<p class="text-xs text-gray-500">${year}</p>` : ''}
+      <p class="mt-2 text-[11px] text-white/55 truncate leading-tight">${title}</p>
     </div>`
 }
 
@@ -387,12 +758,12 @@ async function openPlayer(id, type) {
 }
 
 function playEpisode(season, episode) {
-  tvState.season = season
+  tvState.season  = season
   tvState.episode = episode
-  const details = tvState.details
+  const details   = tvState.details
   if (details) {
     document.getElementById('player-title').textContent =
-      `${getTitle(details)} — T${season}:E${episode}`
+      `${getTitle(details)} · T${season} E${episode}`
   }
   document.getElementById('player-iframe').src = buildEmbedUrl()
   highlightEpisode(season, episode)
@@ -414,15 +785,15 @@ function toggleFullscreen() {
 }
 
 document.addEventListener('fullscreenchange', () => {
-  const icon = document.getElementById('fullscreen-icon')
-  const btn  = document.getElementById('fullscreen-btn')
-  if (!icon || !btn) return
+  const icon  = document.getElementById('fullscreen-icon')
+  const label = document.getElementById('fullscreen-label')
+  if (!icon || !label) return
   if (document.fullscreenElement) {
-    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9V4m0 5H4m5 0L3 3m18 6V4m0 5h-5m5 0l-6-6M9 15v5m0-5H4m5 5l-6 6m18-6v5m0-5h-5m5 5l-6-6"/>'
-    document.getElementById('fullscreen-label').textContent = 'Sair'
+    icon.innerHTML  = '<path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4m0 5H4m5 0L3 3m18 6V4m0 5h-5m5 0l-6-6M9 15v5m0-5H4m5 5l-6 6m18-6v5m0-5h-5m5 5l-6-6"/>'
+    label.textContent = 'Sair'
   } else {
-    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-5V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>'
-    document.getElementById('fullscreen-label').textContent = 'Tela cheia'
+    icon.innerHTML  = '<path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-5V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>'
+    label.textContent = 'Tela cheia'
   }
 })
 
@@ -454,7 +825,7 @@ function toggleEpisodes() {
   sidebar.classList.toggle('flex-col')
 }
 
-// ── EPISODE SELECTOR ──────────────────────────────────────────────
+// ── EPISODES ──────────────────────────────────────────────────────
 function renderSeasonSelect(details) {
   const sel = document.getElementById('season-select')
   sel.innerHTML = ''
@@ -479,43 +850,48 @@ async function changeSeason(season) {
 
 async function loadEpisodes(season) {
   const list = document.getElementById('episodes-list')
-  list.innerHTML = '<div class="flex justify-center py-6"><div class="w-6 h-6 border-2 border-[#E50914] border-t-transparent rounded-full animate-spin"></div></div>'
+  list.innerHTML = `<div class="flex justify-center py-8"><div class="w-6 h-6 border-2 border-[#E50914] border-t-transparent rounded-full animate-spin"></div></div>`
   try {
     const data = await api(`/tv/${tvState.id}/season/${season}`)
     list.innerHTML = data.episodes.map(ep => `
       <button onclick="playEpisode(${season},${ep.episode_number})"
-        id="ep-${season}-${ep.episode_number}"
-        class="w-full text-left p-3 border-b border-white/5 hover:bg-white/5 transition-colors">
+        id="ep-${season}-${ep.episode_number}" class="ep-btn">
         <div class="flex gap-3 items-start">
-          ${ep.still_path
-            ? `<img src="${imgUrl(ep.still_path,'w185')}" class="w-20 aspect-video object-cover rounded flex-none" loading="lazy">`
-            : `<div class="w-20 aspect-video bg-gray-700 rounded flex-none flex items-center justify-center"><svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>`}
+          <div class="flex-none relative">
+            ${ep.still_path
+              ? `<img src="${imgUrl(ep.still_path,'w185')}" class="w-[72px] rounded" style="aspect-ratio:16/9;object-fit:cover" loading="lazy">`
+              : `<div class="w-[72px] rounded flex items-center justify-center" style="aspect-ratio:16/9;background:rgba(255,255,255,.05)">
+                  <svg class="w-4 h-4" style="color:rgba(255,255,255,.2)" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </div>`}
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity" style="background:rgba(0,0,0,.5);border-radius:4px">
+              <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
           <div class="flex-1 min-w-0">
-            <p class="text-white text-xs font-medium truncate">${ep.episode_number}. ${ep.name}</p>
-            ${ep.runtime ? `<p class="text-gray-500 text-xs">${ep.runtime}min</p>` : ''}
-            ${ep.overview ? `<p class="text-gray-400 text-xs mt-1 clamp2 leading-relaxed">${ep.overview}</p>` : ''}
+            <p class="text-white text-xs font-semibold truncate leading-tight">${ep.episode_number}. ${ep.name}</p>
+            ${ep.runtime ? `<p class="text-[10px] mt-0.5" style="color:rgba(255,255,255,.3)">${ep.runtime} min</p>` : ''}
+            ${ep.overview ? `<p class="text-[10px] mt-1.5 clamp2 leading-relaxed" style="color:rgba(255,255,255,.4)">${ep.overview}</p>` : ''}
           </div>
         </div>
       </button>`).join('')
   } catch(e) {
-    list.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">Erro ao carregar episódios</p>'
+    list.innerHTML = '<p class="text-center py-6 text-sm" style="color:rgba(255,255,255,.3)">Erro ao carregar episódios</p>'
   }
 }
 
 function highlightEpisode(season, episode) {
-  document.querySelectorAll('[id^="ep-"]').forEach(el => {
-    el.classList.remove('bg-white/10', 'border-l-2', 'border-l-[#E50914]')
-  })
+  document.querySelectorAll('[id^="ep-"]').forEach(el => el.classList.remove('active'))
   const el = document.getElementById(`ep-${season}-${episode}`)
-  if (el) el.classList.add('bg-white/10', 'border-l-2', 'border-l-[#E50914]')
+  if (el) { el.classList.add('active'); el.scrollIntoView({ block: 'nearest' }) }
 }
 
 // ── SEARCH ────────────────────────────────────────────────────────
 function toggleSearch() {
+  const wrap  = document.getElementById('search-expand-wrap')
   const input = document.getElementById('search-input')
-  if (input.classList.contains('hidden')) {
-    input.classList.remove('hidden')
-    input.focus()
+  if (!wrap.classList.contains('open')) {
+    wrap.classList.add('open')
+    setTimeout(() => input.focus(), 50)
   } else {
     doSearch()
   }
@@ -524,17 +900,20 @@ function toggleSearch() {
 function closeSearch() {
   setTimeout(() => {
     const input = document.getElementById('search-input')
-    if (!input.value) input.classList.add('hidden')
+    if (!input.value) {
+      document.getElementById('search-expand-wrap').classList.remove('open')
+    }
   }, 200)
 }
 
 function doSearch() {
   const q = document.getElementById('search-input').value.trim()
   if (!q) return
-  document.getElementById('search-input').classList.add('hidden')
+  document.getElementById('search-expand-wrap').classList.remove('open')
   document.getElementById('search-input').value = ''
   searchState = { query: q, type: '', page: 1, totalPages: 1 }
-  document.getElementById('search-title').textContent = `Resultados para "${q}"`
+  document.getElementById('search-title').textContent = `"${q}"`
+  document.getElementById('search-count').textContent = ''
   document.getElementById('search-grid').innerHTML = ''
   showView('search')
   loadSearch()
@@ -544,6 +923,7 @@ function browseType(type) {
   const labels = { movie: 'Filmes', tv: 'Séries', anime: 'Animes' }
   searchState = { query: '', type, page: 1, totalPages: 1 }
   document.getElementById('search-title').textContent = labels[type] || type
+  document.getElementById('search-count').textContent = ''
   document.getElementById('search-grid').innerHTML = ''
   showView('search')
   loadSearch()
@@ -551,8 +931,12 @@ function browseType(type) {
 
 async function loadSearch() {
   const loading = document.getElementById('search-loading')
+  const empty   = document.getElementById('search-empty')
   document.getElementById('pagination').classList.add('hidden')
   loading.classList.remove('hidden')
+  loading.classList.add('flex')
+  empty.classList.add('hidden')
+  empty.classList.remove('flex')
   document.getElementById('search-grid').innerHTML = ''
   window.scrollTo({ top: 0, behavior: 'smooth' })
 
@@ -574,16 +958,23 @@ async function loadSearch() {
 
     searchState.totalPages = Math.min(data.total_pages, 500)
     const grid = document.getElementById('search-grid')
-    data.results.forEach(c => {
-      const t = type || getType(c)
-      grid.insertAdjacentHTML('beforeend', cardHTML(c, t === 'anime' ? 'tv' : t))
-    })
 
-    renderPagination()
+    if (!data.results.length) {
+      empty.classList.remove('hidden')
+      empty.classList.add('flex')
+    } else {
+      document.getElementById('search-count').textContent = `${data.total_results?.toLocaleString('pt-BR') || ''} resultados`
+      data.results.forEach(c => {
+        const t = type || getType(c)
+        grid.insertAdjacentHTML('beforeend', cardHTML(c, t === 'anime' ? 'tv' : t))
+      })
+      renderPagination()
+    }
   } catch(e) {
     console.error(e)
   } finally {
     loading.classList.add('hidden')
+    loading.classList.remove('flex')
   }
 }
 
@@ -597,39 +988,35 @@ function renderPagination() {
   if (totalPages <= 1) return
   const el = document.getElementById('pagination')
   el.classList.remove('hidden')
+  el.classList.add('flex')
 
   const btn = (label, p, active = false, disabled = false) => `
     <button onclick="${disabled ? '' : `goToPage(${p})`}"
-      class="min-w-[36px] h-9 px-2 rounded text-sm font-medium transition-colors
-        ${active   ? 'bg-[#E50914] text-white'           : ''}
-        ${disabled ? 'text-gray-600 cursor-default'       : ''}
-        ${!active && !disabled ? 'bg-white/10 text-gray-300 hover:bg-white/20' : ''}">
+      class="page-btn"
+      style="${active   ? 'background:#E50914;color:#fff' :
+              disabled  ? 'color:rgba(255,255,255,.2);cursor:default' :
+                          'background:rgba(255,255,255,.07);color:rgba(255,255,255,.7)'}
+             ${!disabled && !active ? ';hover:background:rgba(255,255,255,.12)' : ''}">
       ${label}
     </button>`
-
-  const dots = `<span class="min-w-[36px] h-9 flex items-center justify-center text-gray-600 text-sm">…</span>`
+  const dots = `<span class="page-btn" style="color:rgba(255,255,255,.2);cursor:default">…</span>`
 
   let pages = []
   pages.push(btn('‹', page - 1, false, page === 1))
-
   if (totalPages <= 7) {
     for (let i = 1; i <= totalPages; i++) pages.push(btn(i, i, i === page))
   } else {
     pages.push(btn(1, 1, page === 1))
     if (page > 3) pages.push(dots)
-    for (let i = Math.max(2, page - 1); i <= Math.min(totalPages - 1, page + 1); i++) {
-      pages.push(btn(i, i, i === page))
-    }
+    for (let i = Math.max(2, page-1); i <= Math.min(totalPages-1, page+1); i++) pages.push(btn(i, i, i===page))
     if (page < totalPages - 2) pages.push(dots)
     pages.push(btn(totalPages, totalPages, page === totalPages))
   }
-
   pages.push(btn('›', page + 1, false, page === totalPages))
   el.innerHTML = pages.join('')
 }
 
-// ── MODAL (detail panel) ──────────────────────────────────────────
-// (modal not used in click path — player opens directly)
+// ── MODAL ─────────────────────────────────────────────────────────
 function closeModal() {
   document.getElementById('modal').classList.add('hidden')
   document.getElementById('modal').classList.remove('flex')
@@ -645,27 +1032,25 @@ function showView(name) {
   document.getElementById('view-search').classList.toggle('hidden', name !== 'search')
   document.getElementById('view-player').classList.toggle('hidden', name !== 'player')
 
-  const nav = document.getElementById('navbar')
+  const nav      = document.getElementById('navbar')
   const genreBar = document.getElementById('genre-bar')
   nav.classList.toggle('hidden', name === 'player')
   genreBar.classList.toggle('hidden', name === 'player')
 
-  // Navbar bg on home
   if (name === 'home') {
-    window.onscroll = () => {
-      nav.style.background = window.scrollY > 20
-        ? '#141414'
-        : 'linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)'
+    const updateNav = () => {
+      if (window.scrollY > 40) nav.classList.add('scrolled')
+      else nav.classList.remove('scrolled')
     }
+    updateNav()
+    window.onscroll = updateNav
   } else {
-    nav.style.background = '#141414'
     window.onscroll = null
+    nav.style.background = ''
   }
 }
 
-function showHome() {
-  showView('home')
-}
+function showHome() { showView('home') }
 
 // ── GENRES ────────────────────────────────────────────────────────
 const MOVIE_GENRES = [
@@ -683,23 +1068,23 @@ const TV_GENRES = [
 ]
 
 let activeGenreTab = 'movie'
-let activeGenreId = null
+let activeGenreId  = null
 
 function setGenreTab(tab) {
   activeGenreTab = tab
-  activeGenreId = null
-  document.getElementById('gtab-movie').className = `text-xs font-bold px-3 py-1 rounded-full border transition-colors ${tab==='movie' ? 'border-[#E50914] text-white bg-[#E50914]' : 'border-white/20 text-gray-400'}`
-  document.getElementById('gtab-tv').className    = `text-xs font-bold px-3 py-1 rounded-full border transition-colors ${tab==='tv'    ? 'border-[#E50914] text-white bg-[#E50914]' : 'border-white/20 text-gray-400'}`
+  activeGenreId  = null
+  const on  = 'text-[11px] font-bold px-3.5 py-1 rounded-full border transition-all border-[#E50914] text-white bg-[#E50914]'
+  const off = 'text-[11px] font-bold px-3.5 py-1 rounded-full border transition-all border-white/15 text-white/45'
+  document.getElementById('gtab-movie').className = tab === 'movie' ? on : off
+  document.getElementById('gtab-tv').className    = tab === 'tv'    ? on : off
   renderGenrePills()
 }
 
 function renderGenrePills() {
   const genres = activeGenreTab === 'movie' ? MOVIE_GENRES : TV_GENRES
-  const pills = document.getElementById('genre-pills')
-  pills.innerHTML = genres.map(g => `
+  document.getElementById('genre-pills').innerHTML = genres.map(g => `
     <button onclick="browseGenre('${activeGenreTab}',${g.id},'${g.name}')"
-      class="flex-none text-xs px-3 py-1 rounded-full border transition-colors whitespace-nowrap
-        ${activeGenreId===g.id ? 'bg-white text-black border-white font-bold' : 'border-white/20 text-gray-300 hover:border-white/50 hover:text-white'}">
+      class="genre-pill ${activeGenreId === g.id ? 'active' : ''}">
       ${g.name}
     </button>`).join('')
 }
@@ -709,6 +1094,7 @@ function browseGenre(mediaType, genreId, genreName) {
   renderGenrePills()
   searchState = { query: '', type: 'genre', genreId, mediaType, page: 1, totalPages: 1 }
   document.getElementById('search-title').textContent = genreName
+  document.getElementById('search-count').textContent = ''
   document.getElementById('search-grid').innerHTML = ''
   showView('search')
   loadSearch()
@@ -723,14 +1109,21 @@ function doLogin() {
   const err  = document.getElementById('login-error')
 
   if (user === CREDENTIALS.user && pass === CREDENTIALS.pass) {
+    const screen = document.getElementById('login-screen')
+    screen.style.transition = 'opacity .4s'
+    screen.style.opacity = '0'
+    setTimeout(() => screen.classList.add('hidden'), 400)
     sessionStorage.setItem('lf_auth', '1')
-    document.getElementById('login-screen').classList.add('hidden')
     err.classList.add('hidden')
     init()
   } else {
     err.classList.remove('hidden')
     document.getElementById('login-pass').value = ''
     document.getElementById('login-pass').focus()
+    document.getElementById('login-pass').closest('div').style.animation = 'none'
+    requestAnimationFrame(() => {
+      document.getElementById('login-pass').closest('div').style.animation = 'shake .3s ease'
+    })
   }
 }
 
@@ -743,5 +1136,15 @@ if (sessionStorage.getItem('lf_auth') === '1') {
   document.getElementById('login-user').focus()
 }
 </script>
+
+<style>
+  @keyframes shake {
+    0%,100% { transform: translateX(0) }
+    20%     { transform: translateX(-6px) }
+    60%     { transform: translateX(6px) }
+  }
+  /* hover:bg-white/8 via inline style doesn't work in TW — override */
+  .nav-link:hover { background: rgba(255,255,255,.07); }
+</style>
 </body>
 </html>
