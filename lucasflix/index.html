@@ -171,6 +171,11 @@
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582M20 20v-5h-.581M5.635 19A9 9 0 1 0 4.582 9"/></svg>
         Recarregar
       </button>
+      <button id="fullscreen-btn" onclick="toggleFullscreen()"
+        class="flex items-center gap-1.5 bg-white/10 text-white text-sm px-3 py-1.5 rounded hover:bg-white/20 transition-colors">
+        <svg id="fullscreen-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-5V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+        <span id="fullscreen-label">Tela cheia</span>
+      </button>
     </div>
     <button id="episodes-toggle-btn" onclick="toggleEpisodes()" class="hidden items-center gap-1.5 bg-white/10 text-white text-sm px-3 py-1.5 rounded hover:bg-white/20 transition-colors shrink-0">
       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -180,9 +185,9 @@
   <div class="flex flex-1 overflow-hidden">
     <div class="flex-1 relative">
       <iframe id="player-iframe" src="" class="w-full h-full min-h-[calc(100vh-56px)]"
-        allowfullscreen allow="fullscreen; autoplay; encrypted-media"
+        allowfullscreen
+        allow="autoplay *; encrypted-media *; picture-in-picture *; fullscreen *; clipboard-write *; accelerometer *; gyroscope *"
         referrerpolicy="no-referrer"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-fullscreen allow-presentation allow-modals allow-pointer-lock allow-downloads allow-orientation-lock allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
         title="Player"></iframe>
     </div>
     <div id="episodes-sidebar" class="hidden w-72 md:w-80 h-[calc(100vh-56px)] overflow-hidden border-l border-white/10 shrink-0 flex flex-col bg-[#181818]">
@@ -394,9 +399,32 @@ function playEpisode(season, episode) {
 }
 
 function closePlayer() {
+  if (document.fullscreenElement) document.exitFullscreen()
   document.getElementById('player-iframe').src = ''
   showView('home')
 }
+
+function toggleFullscreen() {
+  const el = document.getElementById('view-player')
+  if (!document.fullscreenElement) {
+    el.requestFullscreen().catch(() => {})
+  } else {
+    document.exitFullscreen()
+  }
+}
+
+document.addEventListener('fullscreenchange', () => {
+  const icon = document.getElementById('fullscreen-icon')
+  const btn  = document.getElementById('fullscreen-btn')
+  if (!icon || !btn) return
+  if (document.fullscreenElement) {
+    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9V4m0 5H4m5 0L3 3m18 6V4m0 5h-5m5 0l-6-6M9 15v5m0-5H4m5 5l-6 6m18-6v5m0-5h-5m5 5l-6-6"/>'
+    document.getElementById('fullscreen-label').textContent = 'Sair'
+  } else {
+    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-5V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>'
+    document.getElementById('fullscreen-label').textContent = 'Tela cheia'
+  }
+})
 
 function buildEmbedUrl() {
   if (playerState.type === 'movie') return `${SOURCES[activeSource]}/filme/${playerState.imdbId}`
@@ -687,7 +715,7 @@ function browseGenre(mediaType, genreId, genreName) {
 }
 
 // ── AUTH ──────────────────────────────────────────────────────────
-const CREDENTIALS = { user: 'lucas', pass: 'lucas@gostosinho' }
+const CREDENTIALS = { user: 'admin', pass: 'lucas' }
 
 function doLogin() {
   const user = document.getElementById('login-user').value.trim()
