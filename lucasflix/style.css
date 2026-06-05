@@ -1,0 +1,351 @@
+    :root {
+      --red: #E50914;
+      --bg: #0a0a0a;
+      --surface: #161616;
+      --surface2: #1f1f1f;
+      --border: rgba(255,255,255,0.07);
+    }
+
+    * { box-sizing: border-box; }
+    body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+
+    .scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+    .clamp2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .clamp3 { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+
+    /* ── Animations ── */
+    .fade-in  { animation: fadeIn .35s cubic-bezier(.4,0,.2,1) both; }
+    .slide-up { animation: slideUp .4s cubic-bezier(.4,0,.2,1) both; }
+    @keyframes fadeIn  { from { opacity:0 } to { opacity:1 } }
+    @keyframes slideUp { from { opacity:0; transform:translateY(20px) } to { opacity:1; transform:translateY(0) } }
+
+    /* ── Skeleton ── */
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.6s infinite;
+      border-radius: 6px;
+    }
+    @keyframes shimmer { from { background-position: 200% 0 } to { background-position: -200% 0 } }
+
+    /* ── Login ── */
+    .login-bg {
+      background: radial-gradient(ellipse 120% 80% at 50% 0%, rgba(229,9,20,.18) 0%, transparent 65%),
+                  radial-gradient(ellipse 80% 60% at 80% 100%, rgba(229,9,20,.08) 0%, transparent 60%),
+                  var(--bg);
+    }
+    .glass-card {
+      background: rgba(10,10,10,.72);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+    }
+    .input-field {
+      width: 100%;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      color: #fff;
+      font-size: .875rem;
+      padding: .75rem 1rem;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color .2s, background .2s;
+    }
+    .input-field::placeholder { color: rgba(255,255,255,.3); }
+    .input-field:focus {
+      border-color: var(--red);
+      background: rgba(255,255,255,.09);
+    }
+
+    /* ── Navbar ── */
+    #navbar {
+      transition: background .3s, backdrop-filter .3s;
+    }
+    #navbar.scrolled {
+      background: rgba(10,10,10,.95) !important;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Hero ── */
+    .hero-gradient-v {
+      background: linear-gradient(to top,
+        var(--bg) 0%,
+        rgba(10,10,10,.85) 20%,
+        rgba(10,10,10,.4) 50%,
+        transparent 100%
+      );
+    }
+    .hero-gradient-h {
+      background: linear-gradient(to right,
+        rgba(10,10,10,.95) 0%,
+        rgba(10,10,10,.6) 40%,
+        transparent 70%
+      );
+    }
+
+    /* ── Cards ── */
+    .card-wrap {
+      position: relative;
+      flex: none;
+      width: 140px;
+      cursor: pointer;
+      transition: transform .25s cubic-bezier(.4,0,.2,1);
+    }
+    @media (min-width: 768px) { .card-wrap { width: 168px; } }
+    .card-wrap:hover { transform: translateY(-4px) scale(1.03); z-index: 2; }
+
+    .card-img-wrap {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      aspect-ratio: 2/3;
+      background: var(--surface);
+    }
+    .card-img-wrap img {
+      width:100%; height:100%; object-fit:cover;
+      transition: transform .35s cubic-bezier(.4,0,.2,1);
+    }
+    .card-wrap:hover .card-img-wrap img { transform: scale(1.07); }
+
+    .card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.2) 50%, transparent 100%);
+      opacity: 0;
+      transition: opacity .25s;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .card-wrap:hover .card-overlay { opacity: 1; }
+
+    .card-play-btn {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,.95);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 6px;
+      transform: scale(.8);
+      transition: transform .2s;
+    }
+    .card-wrap:hover .card-play-btn { transform: scale(1); }
+
+    .rating-badge {
+      position: absolute; top: 6px; left: 6px;
+      background: rgba(0,0,0,.75);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 4px;
+      padding: 2px 5px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #fbbf24;
+      display: flex; align-items: center; gap: 3px;
+      line-height: 1;
+    }
+
+    .type-badge {
+      position: absolute; top: 6px; right: 6px;
+      background: rgba(229,9,20,.85);
+      border-radius: 4px;
+      padding: 2px 5px;
+      font-size: 9px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    /* ── Row arrows ── */
+    .row-arrow {
+      position: absolute; top: 0; bottom: 20px; z-index: 10;
+      width: 48px;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      transition: opacity .2s;
+      cursor: pointer;
+      border: none; background: transparent;
+    }
+    .row-arrow-left  { left: 0;  background: linear-gradient(to right, rgba(10,10,10,.9), transparent); }
+    .row-arrow-right { right: 0; background: linear-gradient(to left,  rgba(10,10,10,.9), transparent); }
+    .row-group:hover .row-arrow { opacity: 1; }
+    .row-arrow svg { filter: drop-shadow(0 0 6px rgba(0,0,0,.8)); }
+
+    /* ── Genre pills ── */
+    .genre-pill {
+      flex: none;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.15);
+      color: rgba(255,255,255,.6);
+      white-space: nowrap;
+      transition: all .18s;
+      cursor: pointer;
+      background: transparent;
+    }
+    .genre-pill:hover {
+      border-color: rgba(255,255,255,.4);
+      color: #fff;
+      background: rgba(255,255,255,.06);
+    }
+    .genre-pill.active {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+      font-weight: 700;
+    }
+
+    /* ── Player bar ── */
+    .player-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,.8);
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.08);
+      transition: all .15s;
+      cursor: pointer;
+    }
+    .player-btn:hover {
+      background: rgba(255,255,255,.14);
+      color: #fff;
+      border-color: rgba(255,255,255,.15);
+    }
+
+    /* ── Hero buttons ── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #fff;
+      color: #000;
+      font-weight: 700;
+      font-size: .9rem;
+      padding: 10px 24px;
+      border-radius: 6px;
+      transition: background .15s, transform .15s;
+      border: none; cursor: pointer;
+    }
+    .btn-primary:hover { background: rgba(255,255,255,.85); transform: translateY(-1px); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(109,109,110,.7);
+      color: #fff;
+      font-weight: 600;
+      font-size: .9rem;
+      padding: 10px 24px;
+      border-radius: 6px;
+      transition: background .15s, transform .15s;
+      border: none; cursor: pointer;
+      backdrop-filter: blur(4px);
+    }
+    .btn-secondary:hover { background: rgba(109,109,110,.5); transform: translateY(-1px); }
+
+    /* ── Search ── */
+    .search-expand {
+      max-width: 0;
+      overflow: hidden;
+      transition: max-width .3s cubic-bezier(.4,0,.2,1), opacity .2s;
+      opacity: 0;
+    }
+    .search-expand.open {
+      max-width: 280px;
+      opacity: 1;
+    }
+
+    /* ── Pagination ── */
+    .page-btn {
+      min-width: 36px; height: 36px;
+      border-radius: 6px;
+      font-size: 13px; font-weight: 600;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all .15s;
+      cursor: pointer; border: none;
+    }
+
+    /* ── Episode sidebar ── */
+    .ep-btn {
+      width: 100%;
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+      transition: background .15s;
+      background: transparent;
+      border-left: 3px solid transparent;
+      cursor: pointer;
+    }
+    .ep-btn:hover { background: rgba(255,255,255,.05); }
+    .ep-btn.active {
+      background: rgba(255,255,255,.07);
+      border-left-color: var(--red);
+    }
+
+    /* ── Touch devices ── */
+    @media (hover: none) {
+      .row-arrow { opacity: .85; width: 32px; }
+      .card-wrap:hover { transform: none; }
+    }
+    /* Row horizontal scroll: don't block vertical page scroll */
+    .row-track { touch-action: pan-x; cursor: grab; user-select: none; }
+    .row-track.dragging { cursor: grabbing; scroll-behavior: auto; }
+    /* Bigger tap targets on mobile */
+    @media (max-width: 639px) {
+      .player-btn { min-height: 40px; min-width: 40px; justify-content: center; }
+      .ep-btn { padding: 12px 12px; }
+    }
+
+    /* ── Search expand: narrower on small screens ── */
+    @media (max-width: 479px) {
+      .search-expand.open { max-width: 140px; }
+    }
+
+    /* ── Episodes list: taller on desktop ── */
+    @media (min-width: 768px) {
+      #episodes-list { max-height: 65vh !important; }
+    }
+
+    /* ── Player box: desktop gets rounded corners ── */
+    @media (min-width: 768px) {
+      #player-box { border-radius: 12px; overflow: hidden; }
+      #episodes-sidebar { border-radius: 12px !important; margin: 0 !important; }
+    }
+
+    /* ── Player controls: icon-only on phones ── */
+    @media (max-width: 639px) {
+      .player-btn .btn-txt { display: none; }
+      .player-btn { padding: 6px 10px; }
+    }
+
+    /* ── Nav: active link ── */
+    .nav-link.active { color: #fff; background: rgba(255,255,255,.1); }
+
+    /* ── Row arrow: hidden at scroll edge ── */
+    .row-arrow.at-edge { opacity: 0 !important; pointer-events: none; }
+
+    /* ── Episode thumbnail play overlay: always visible on touch ── */
+    @media (hover: none) {
+      .ep-overlay { opacity: 1 !important; }
+    }
+
+    /* ── Continue watching banner ── */
+    #cw-banner { animation: fadeIn .4s cubic-bezier(.4,0,.2,1) both; }
+  </style>
+  @keyframes shake {
+    0%,100% { transform: translateX(0) }
+    20%     { transform: translateX(-6px) }
+    60%     { transform: translateX(6px) }
+  }
+  /* hover:bg-white/8 via inline style doesn't work in TW — override */
+  .nav-link:hover { background: rgba(255,255,255,.07); }
+  /* Pagination button state classes (inline style hover doesn't work) */
+  .page-btn-normal   { background: rgba(255,255,255,.07); color: rgba(255,255,255,.7); }
+  .page-btn-normal:hover { background: rgba(255,255,255,.14); color: #fff; }
+  .page-btn-active   { background: #E50914; color: #fff; cursor: default; }
+  .page-btn-disabled { color: rgba(255,255,255,.2); cursor: default; pointer-events: none; background: transparent; }
+</style>

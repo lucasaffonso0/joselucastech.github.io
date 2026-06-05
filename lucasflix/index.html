@@ -17,295 +17,7 @@
       }
     }
   </script>
-  <style>
-    :root {
-      --red: #E50914;
-      --bg: #0a0a0a;
-      --surface: #161616;
-      --surface2: #1f1f1f;
-      --border: rgba(255,255,255,0.07);
-    }
-
-    * { box-sizing: border-box; }
-    body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
-
-    .scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }
-    .scrollbar-hide::-webkit-scrollbar { display: none; }
-
-    .clamp2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-    .clamp3 { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-
-    /* ── Animations ── */
-    .fade-in  { animation: fadeIn .35s cubic-bezier(.4,0,.2,1) both; }
-    .slide-up { animation: slideUp .4s cubic-bezier(.4,0,.2,1) both; }
-    @keyframes fadeIn  { from { opacity:0 } to { opacity:1 } }
-    @keyframes slideUp { from { opacity:0; transform:translateY(20px) } to { opacity:1; transform:translateY(0) } }
-
-    /* ── Skeleton ── */
-    .skeleton {
-      background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.6s infinite;
-      border-radius: 6px;
-    }
-    @keyframes shimmer { from { background-position: 200% 0 } to { background-position: -200% 0 } }
-
-    /* ── Login ── */
-    .login-bg {
-      background: radial-gradient(ellipse 120% 80% at 50% 0%, rgba(229,9,20,.18) 0%, transparent 65%),
-                  radial-gradient(ellipse 80% 60% at 80% 100%, rgba(229,9,20,.08) 0%, transparent 60%),
-                  var(--bg);
-    }
-    .glass-card {
-      background: rgba(10,10,10,.72);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid var(--border);
-    }
-    .input-field {
-      width: 100%;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.1);
-      color: #fff;
-      font-size: .875rem;
-      padding: .75rem 1rem;
-      border-radius: 8px;
-      outline: none;
-      transition: border-color .2s, background .2s;
-    }
-    .input-field::placeholder { color: rgba(255,255,255,.3); }
-    .input-field:focus {
-      border-color: var(--red);
-      background: rgba(255,255,255,.09);
-    }
-
-    /* ── Navbar ── */
-    #navbar {
-      transition: background .3s, backdrop-filter .3s;
-    }
-    #navbar.scrolled {
-      background: rgba(10,10,10,.95) !important;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    /* ── Hero ── */
-    .hero-gradient-v {
-      background: linear-gradient(to top,
-        var(--bg) 0%,
-        rgba(10,10,10,.85) 20%,
-        rgba(10,10,10,.4) 50%,
-        transparent 100%
-      );
-    }
-    .hero-gradient-h {
-      background: linear-gradient(to right,
-        rgba(10,10,10,.95) 0%,
-        rgba(10,10,10,.6) 40%,
-        transparent 70%
-      );
-    }
-
-    /* ── Cards ── */
-    .card-wrap {
-      position: relative;
-      flex: none;
-      width: 140px;
-      cursor: pointer;
-      transition: transform .25s cubic-bezier(.4,0,.2,1);
-    }
-    @media (min-width: 768px) { .card-wrap { width: 168px; } }
-    .card-wrap:hover { transform: translateY(-4px) scale(1.03); z-index: 2; }
-
-    .card-img-wrap {
-      position: relative;
-      overflow: hidden;
-      border-radius: 8px;
-      aspect-ratio: 2/3;
-      background: var(--surface);
-    }
-    .card-img-wrap img {
-      width:100%; height:100%; object-fit:cover;
-      transition: transform .35s cubic-bezier(.4,0,.2,1);
-    }
-    .card-wrap:hover .card-img-wrap img { transform: scale(1.07); }
-
-    .card-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.2) 50%, transparent 100%);
-      opacity: 0;
-      transition: opacity .25s;
-      display: flex; flex-direction: column; justify-content: flex-end;
-      padding: 10px;
-      border-radius: 8px;
-    }
-    .card-wrap:hover .card-overlay { opacity: 1; }
-
-    .card-play-btn {
-      width: 36px; height: 36px;
-      background: rgba(255,255,255,.95);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 6px;
-      transform: scale(.8);
-      transition: transform .2s;
-    }
-    .card-wrap:hover .card-play-btn { transform: scale(1); }
-
-    .rating-badge {
-      position: absolute; top: 6px; left: 6px;
-      background: rgba(0,0,0,.75);
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 4px;
-      padding: 2px 5px;
-      font-size: 10px;
-      font-weight: 700;
-      color: #fbbf24;
-      display: flex; align-items: center; gap: 3px;
-      line-height: 1;
-    }
-
-    .type-badge {
-      position: absolute; top: 6px; right: 6px;
-      background: rgba(229,9,20,.85);
-      border-radius: 4px;
-      padding: 2px 5px;
-      font-size: 9px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-    }
-
-    /* ── Row arrows ── */
-    .row-arrow {
-      position: absolute; top: 0; bottom: 20px; z-index: 10;
-      width: 48px;
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0;
-      transition: opacity .2s;
-      cursor: pointer;
-      border: none; background: transparent;
-    }
-    .row-arrow-left  { left: 0;  background: linear-gradient(to right, rgba(10,10,10,.9), transparent); }
-    .row-arrow-right { right: 0; background: linear-gradient(to left,  rgba(10,10,10,.9), transparent); }
-    .row-group:hover .row-arrow { opacity: 1; }
-    .row-arrow svg { filter: drop-shadow(0 0 6px rgba(0,0,0,.8)); }
-
-    /* ── Genre pills ── */
-    .genre-pill {
-      flex: none;
-      font-size: 11px;
-      font-weight: 500;
-      padding: 4px 12px;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,.15);
-      color: rgba(255,255,255,.6);
-      white-space: nowrap;
-      transition: all .18s;
-      cursor: pointer;
-      background: transparent;
-    }
-    .genre-pill:hover {
-      border-color: rgba(255,255,255,.4);
-      color: #fff;
-      background: rgba(255,255,255,.06);
-    }
-    .genre-pill.active {
-      background: #fff;
-      color: #000;
-      border-color: #fff;
-      font-weight: 700;
-    }
-
-    /* ── Player bar ── */
-    .player-btn {
-      display: flex; align-items: center; gap: 6px;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 500;
-      color: rgba(255,255,255,.8);
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.08);
-      transition: all .15s;
-      cursor: pointer;
-    }
-    .player-btn:hover {
-      background: rgba(255,255,255,.14);
-      color: #fff;
-      border-color: rgba(255,255,255,.15);
-    }
-
-    /* ── Hero buttons ── */
-    .btn-primary {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: #fff;
-      color: #000;
-      font-weight: 700;
-      font-size: .9rem;
-      padding: 10px 24px;
-      border-radius: 6px;
-      transition: background .15s, transform .15s;
-      border: none; cursor: pointer;
-    }
-    .btn-primary:hover { background: rgba(255,255,255,.85); transform: translateY(-1px); }
-
-    .btn-secondary {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(109,109,110,.7);
-      color: #fff;
-      font-weight: 600;
-      font-size: .9rem;
-      padding: 10px 24px;
-      border-radius: 6px;
-      transition: background .15s, transform .15s;
-      border: none; cursor: pointer;
-      backdrop-filter: blur(4px);
-    }
-    .btn-secondary:hover { background: rgba(109,109,110,.5); transform: translateY(-1px); }
-
-    /* ── Search ── */
-    .search-expand {
-      max-width: 0;
-      overflow: hidden;
-      transition: max-width .3s cubic-bezier(.4,0,.2,1), opacity .2s;
-      opacity: 0;
-    }
-    .search-expand.open {
-      max-width: 280px;
-      opacity: 1;
-    }
-
-    /* ── Pagination ── */
-    .page-btn {
-      min-width: 36px; height: 36px;
-      border-radius: 6px;
-      font-size: 13px; font-weight: 600;
-      display: inline-flex; align-items: center; justify-content: center;
-      transition: all .15s;
-      cursor: pointer; border: none;
-    }
-
-    /* ── Episode sidebar ── */
-    .ep-btn {
-      width: 100%;
-      text-align: left;
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(255,255,255,.04);
-      transition: background .15s;
-      background: transparent;
-      border-left: 3px solid transparent;
-      cursor: pointer;
-    }
-    .ep-btn:hover { background: rgba(255,255,255,.05); }
-    .ep-btn.active {
-      background: rgba(255,255,255,.07);
-      border-left-color: var(--red);
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
@@ -369,22 +81,45 @@
       </button>
 
       <div class="hidden md:flex items-center gap-1 text-sm">
-        <button onclick="showHome()" class="nav-link px-3 py-1.5 rounded-md text-white/70 hover:text-white hover:bg-white/8 transition-all">Início</button>
-        <button onclick="browseType('movie')" class="nav-link px-3 py-1.5 rounded-md text-white/70 hover:text-white hover:bg-white/8 transition-all">Filmes</button>
-        <button onclick="browseType('tv')" class="nav-link px-3 py-1.5 rounded-md text-white/70 hover:text-white hover:bg-white/8 transition-all">Séries</button>
-        <button onclick="browseType('anime')" class="nav-link px-3 py-1.5 rounded-md text-white/70 hover:text-white hover:bg-white/8 transition-all">Animes</button>
+        <button id="nav-home" onclick="showHome()" class="nav-link px-3 py-1.5 rounded-md text-white/70 hover:text-white hover:bg-white/8 transition-all">Início</button>
+        <button id="nav-movie" onclick="browseType('movie')" class="nav-link px-3 py-1.5 rounded-md text-white/70 hover:text-white hover:bg-white/8 transition-all">Filmes</button>
+        <button id="nav-tv" onclick="browseType('tv')" class="nav-link px-3 py-1.5 rounded-md text-white/70 hover:text-white hover:bg-white/8 transition-all">Séries</button>
+        <button id="nav-anime" onclick="browseType('anime')" class="nav-link px-3 py-1.5 rounded-md text-white/70 hover:text-white hover:bg-white/8 transition-all">Animes</button>
       </div>
     </div>
 
     <div class="flex items-center gap-3">
+
+      <!-- Player controls: only visible in player view -->
+      <div id="nav-player-controls" class="hidden items-center gap-1">
+        <button onclick="toggleSource()" class="flex items-center gap-1.5 px-3 h-8 rounded-lg text-xs text-white/70 hover:text-white hover:bg-white/8 transition-all">
+          <svg class="w-[15px] h-[15px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+          <span id="nav-source-label">Server 1</span>
+        </button>
+        <button onclick="reloadPlayer()" class="flex items-center gap-1.5 px-3 h-8 rounded-lg text-xs text-white/70 hover:text-white hover:bg-white/8 transition-all">
+          <svg class="w-[15px] h-[15px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          Recarregar
+        </button>
+        <button onclick="toggleFullscreen()" class="flex items-center gap-1.5 px-3 h-8 rounded-lg text-xs text-white/70 hover:text-white hover:bg-white/8 transition-all">
+          <svg class="w-[15px] h-[15px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+          </svg>
+          Tela cheia
+        </button>
+      </div>
+
       <div class="flex items-center gap-2">
         <div class="search-expand" id="search-expand-wrap">
-          <input id="search-input" type="text" placeholder="Títulos, séries, filmes…"
-            class="input-field !py-2 !text-xs w-64"
+          <input id="search-input" type="text" placeholder="Buscar…"
+            class="input-field !py-2 !text-xs w-36 sm:w-52 md:w-64"
             onkeydown="if(event.key==='Enter')doSearch();if(event.key==='Escape')closeSearch()"
             onblur="closeSearch()" />
         </div>
-        <button onclick="toggleSearch()" class="w-9 h-9 flex items-center justify-center rounded-lg text-white/70 hover:text-white hover:bg-white/8 transition-all">
+        <button id="search-btn" onclick="toggleSearch()" onmousedown="event.preventDefault()" class="w-9 h-9 flex items-center justify-center rounded-lg text-white/70 hover:text-white hover:bg-white/8 transition-all">
           <svg class="w-4.5 h-4.5 w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
           </svg>
@@ -399,18 +134,18 @@
 </nav>
 
 <!-- ── GENRE BAR ────────────────────────────────────────────────── -->
-<div id="genre-bar" class="fixed top-16 left-0 right-0 z-40" style="background:rgba(10,10,10,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06)">
-  <div class="px-5 md:px-12 pt-2.5 pb-1.5 flex items-center gap-2">
-    <button id="gtab-movie" onclick="setGenreTab('movie')"
-      class="text-[11px] font-bold px-3.5 py-1 rounded-full border transition-all border-[#E50914] text-white bg-[#E50914]">
+<div id="genre-bar" class="fixed top-16 left-0 right-0 z-40" style="background:rgba(10,10,10,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06)">
+  <div class="px-4 md:px-12 pt-2 pb-2 flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+    <button id="gtab-movie" onclick="browseType('movie')"
+      class="shrink-0 text-[11px] font-bold px-3 py-1 rounded-full border transition-all border-[#E50914] text-white bg-[#E50914]">
       Filmes
     </button>
-    <button id="gtab-tv" onclick="setGenreTab('tv')"
-      class="text-[11px] font-bold px-3.5 py-1 rounded-full border transition-all border-white/15 text-white/45">
+    <button id="gtab-tv" onclick="browseType('tv')"
+      class="shrink-0 text-[11px] font-bold px-3 py-1 rounded-full border transition-all border-white/15 text-white/45">
       Séries
     </button>
-    <div class="w-px h-4 bg-white/10 mx-1"></div>
-    <div id="genre-pills" class="flex gap-1.5 overflow-x-auto scrollbar-hide pb-0.5"></div>
+    <div class="w-px h-4 bg-white/10 mx-0.5 shrink-0"></div>
+    <div id="genre-pills" class="flex gap-1.5 shrink-0"></div>
   </div>
 </div>
 
@@ -425,37 +160,37 @@
     <!-- subtle top shadow for navbar legibility -->
     <div class="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#0a0a0a]/60 to-transparent"></div>
 
-    <div class="relative h-full flex flex-col justify-end pb-28 px-8 md:px-16 max-w-[680px]">
-      <div id="hero-badges" class="flex items-center gap-2 mb-4"></div>
-      <h1 id="hero-title" class="text-5xl md:text-[3.75rem] font-black text-white mb-4 leading-[1.05] tracking-tight drop-shadow-2xl"></h1>
-      <p id="hero-overview" class="text-sm md:text-[.95rem] text-white/70 mb-6 clamp3 leading-relaxed max-w-[520px]"></p>
-      <div class="flex items-center gap-3 flex-wrap">
-        <button id="hero-play" class="btn-primary">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    <div class="relative h-full flex flex-col justify-end pb-20 md:pb-28 px-5 md:px-16 max-w-[680px]">
+      <div id="hero-badges" class="flex items-center gap-2 mb-3"></div>
+      <h1 id="hero-title" class="text-[1.75rem] sm:text-4xl md:text-[3.75rem] font-black text-white mb-3 leading-[1.1] tracking-tight drop-shadow-2xl"></h1>
+      <p id="hero-overview" class="text-xs md:text-[.95rem] text-white/70 mb-5 clamp3 leading-relaxed max-w-[520px]"></p>
+      <div class="flex items-center gap-2.5 flex-wrap">
+        <button id="hero-play" class="btn-primary !text-sm !py-2.5 !px-5">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           Assistir
         </button>
-        <button id="hero-info" class="btn-secondary">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <button id="hero-info" class="btn-secondary !text-sm !py-2.5 !px-5">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
           Mais Info
         </button>
       </div>
-      <div id="hero-meta" class="flex items-center gap-3 mt-5 text-sm text-white/50"></div>
+      <div id="hero-meta" class="flex items-center gap-3 mt-4 text-xs text-white/50"></div>
     </div>
   </div>
 
   <!-- Rows -->
-  <div id="rows" class="mt-[-100px] relative z-10 pb-16 space-y-2"></div>
+  <div id="rows" class="mt-[-60px] md:mt-[-100px] relative z-10 pb-16 space-y-0 md:space-y-2"></div>
 </div>
 
 <!-- ── SEARCH VIEW ─────────────────────────────────────────────── -->
-<div id="view-search" class="hidden pt-[148px] pb-16 px-5 md:px-12 fade-in">
+<div id="view-search" class="hidden pt-[120px] pb-16 px-4 md:px-12 fade-in">
   <div class="flex items-baseline gap-3 mb-8">
     <h1 id="search-title" class="text-white text-2xl font-bold"></h1>
     <span id="search-count" class="text-white/30 text-sm"></span>
   </div>
-  <div id="search-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4"></div>
+  <div id="search-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4"></div>
   <div id="search-loading" class="hidden flex-col items-center gap-4 py-16">
     <div class="w-10 h-10 border-2 border-[#E50914] border-t-transparent rounded-full animate-spin"></div>
     <p class="text-white/30 text-sm">Buscando...</p>
@@ -470,681 +205,113 @@
 </div>
 
 <!-- ── PLAYER VIEW ─────────────────────────────────────────────── -->
-<div id="view-player" class="hidden fixed inset-0 z-[100] bg-black flex flex-col fade-in">
+<div id="view-player" class="hidden fade-in" style="padding-top:64px;min-height:100vh;background:var(--bg)">
+  <div class="max-w-screen-xl mx-auto pb-16">
 
-  <div class="flex items-center gap-3 px-4 py-2.5 shrink-0" style="background:rgba(0,0,0,.92);border-bottom:1px solid rgba(255,255,255,.06);min-height:52px">
-    <button onclick="closePlayer()" class="w-8 h-8 flex items-center justify-center rounded-lg text-white/60 hover:text-white hover:bg-white/8 transition-all shrink-0">
-      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
-      </svg>
-    </button>
-
-    <svg viewBox="0 0 700 120" width="100" height="22" xmlns="http://www.w3.org/2000/svg" class="shrink-0 cursor-pointer" onclick="closePlayer()">
-      <text x="350" y="105" text-anchor="middle" font-family="Georgia,'Times New Roman',serif"
-        font-size="108" font-weight="700" fill="#E50914" letter-spacing="3">LUCASFLIX</text>
-    </svg>
-
-    <div class="w-px h-4 bg-white/10 shrink-0"></div>
-    <span id="player-title" class="text-white/70 text-xs truncate flex-1 min-w-0"></span>
-
-    <div class="ml-auto flex items-center gap-2 shrink-0">
-      <button onclick="toggleSource()" id="source-btn" class="player-btn">
-        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+    <!-- Back (padded) -->
+    <div class="px-4 md:px-10 pt-4 pb-3">
+      <button onclick="closePlayer()"
+        class="inline-flex items-center gap-2 text-white/50 hover:text-white text-sm font-medium transition-colors group">
+        <svg class="w-4 h-4 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
         </svg>
-        <span id="source-label">SuperFlix</span>
-      </button>
-      <button onclick="reloadPlayer()" class="player-btn">
-        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582M20 20v-5h-.581M5.635 19A9 9 0 1 0 4.582 9"/>
-        </svg>
-        Recarregar
-      </button>
-      <button id="fullscreen-btn" onclick="toggleFullscreen()" class="player-btn">
-        <svg id="fullscreen-icon" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-5V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
-        </svg>
-        <span id="fullscreen-label">Tela cheia</span>
-      </button>
-      <button id="episodes-toggle-btn" onclick="toggleEpisodes()" class="hidden player-btn !bg-[#E50914]/15 !border-[#E50914]/20 !text-[#E50914] hover:!bg-[#E50914]/25 shrink-0">
-        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
-        Episódios
+        Voltar
       </button>
     </div>
-  </div>
 
-  <div class="flex flex-1 overflow-hidden">
-    <div class="flex-1 relative">
-      <iframe id="player-iframe" src="" class="w-full h-full min-h-[calc(100vh-52px)]"
-        allowfullscreen
-        allow="autoplay *; encrypted-media *; picture-in-picture *; fullscreen *; clipboard-write *; accelerometer *; gyroscope *"
-        referrerpolicy="no-referrer"
-        title="Player"></iframe>
-    </div>
+    <!-- Layout: stacked on mobile, side-by-side on desktop -->
+    <div class="flex flex-col md:flex-row md:gap-4 md:items-start md:px-10">
 
-    <div id="episodes-sidebar" class="hidden w-72 md:w-80 h-[calc(100vh-52px)] overflow-hidden shrink-0 flex flex-col"
-      style="background:var(--surface);border-left:1px solid rgba(255,255,255,.06)">
-      <div class="p-4" style="border-bottom:1px solid rgba(255,255,255,.06)">
-        <p class="text-white/40 text-[10px] font-semibold uppercase tracking-widest mb-2">Temporada</p>
-        <select id="season-select" onchange="changeSeason(this.value)"
-          class="w-full text-white text-sm rounded-lg px-3 py-2 outline-none"
-          style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)"></select>
+      <!-- Video column -->
+      <div class="flex-1 min-w-0">
+
+        <!-- Video box: edge-to-edge on mobile, rounded on desktop.
+             Uses padding-bottom hack for reliable aspect-ratio across all browsers. -->
+        <div id="player-box" class="relative w-full bg-black md:rounded-xl"
+          style="padding-bottom:100%;height:0">
+          <iframe id="player-iframe" src=""
+            style="position:absolute;top:0;left:0;width:100%;height:100%;min-height:210px;border:0"
+            allowfullscreen
+            allow="autoplay *; encrypted-media *; picture-in-picture *; fullscreen *; clipboard-write *; accelerometer *; gyroscope *; web-share *"
+            referrerpolicy="no-referrer"
+            title="Player"></iframe>
+        </div>
+
+        <!-- Controls + title: padded on mobile -->
+        <div class="px-4 md:px-0">
+
+          <div class="flex flex-wrap items-center gap-2 mt-3">
+            <button onclick="toggleSource()" id="source-btn" title="Trocar servidor de vídeo" class="player-btn">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+              </svg>
+              <span id="source-label" class="btn-txt">Server 1</span>
+            </button>
+            <button onclick="reloadPlayer()" class="player-btn">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582M20 20v-5h-.581M5.635 19A9 9 0 1 0 4.582 9"/>
+              </svg>
+              <span class="btn-txt">Recarregar</span>
+            </button>
+            <button id="fullscreen-btn" onclick="toggleFullscreen()" class="player-btn">
+              <svg id="fullscreen-icon" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-5V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+              </svg>
+              <span id="fullscreen-label" class="btn-txt">Tela cheia</span>
+            </button>
+            <button id="episodes-toggle-btn" onclick="toggleEpisodes()"
+              class="hidden player-btn !bg-[#E50914]/15 !border-[#E50914]/20 !text-[#E50914] hover:!bg-[#E50914]/25">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+              </svg>
+              <span class="btn-txt">Episódios</span>
+            </button>
+          </div>
+
+          <div class="mt-4 pb-1">
+            <h1 id="player-title" class="text-white text-xl md:text-2xl font-bold leading-tight"></h1>
+            <div id="player-meta-row" class="flex flex-wrap items-center gap-2.5 mt-2 text-sm text-white/50"></div>
+            <p id="player-overview" class="text-white/50 text-sm leading-relaxed mt-3 max-w-3xl"></p>
+          </div>
+
+        </div>
       </div>
-      <div id="episodes-list" class="flex-1 overflow-y-auto scrollbar-hide"></div>
+
+      <!-- Episodes sidebar: full-width on mobile, fixed on desktop -->
+      <div id="episodes-sidebar" class="hidden w-full md:w-72 md:shrink-0 flex-col mt-3 md:mt-0 mx-4 md:mx-0 md:rounded-xl"
+        style="background:var(--surface);border:1px solid rgba(255,255,255,.07);border-radius:0">
+        <div class="p-3" style="border-bottom:1px solid rgba(255,255,255,.06)">
+          <p class="text-white/40 text-[10px] font-semibold uppercase tracking-widest mb-2">Temporada</p>
+          <select id="season-select" onchange="changeSeason(this.value)"
+            class="w-full text-white text-sm rounded-lg px-3 py-2 outline-none"
+            style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)"></select>
+        </div>
+        <div id="episodes-list" class="overflow-y-auto scrollbar-hide" style="max-height:45vh"></div>
+      </div>
+
     </div>
   </div>
 </div>
 
 <!-- ── MODAL ───────────────────────────────────────────────────── -->
-<div id="modal" class="hidden fixed inset-0 z-[150] bg-black/80 flex items-center justify-center p-4 fade-in" onclick="closeModalOutside(event)" style="backdrop-filter:blur(6px)">
-  <div class="rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl" style="background:var(--surface);border:1px solid rgba(255,255,255,.08)">
+<div id="modal" class="hidden fixed inset-0 z-[150] bg-black/80 flex items-end sm:items-center justify-center sm:p-4 fade-in" onclick="closeModalOutside(event)" style="backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)">
+  <div class="rounded-t-2xl sm:rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto shadow-2xl" style="background:var(--surface);border:1px solid rgba(255,255,255,.08)">
     <div class="relative">
       <img id="modal-backdrop" src="" alt="" class="w-full aspect-video object-cover rounded-t-2xl" />
       <div class="absolute inset-0 bg-gradient-to-t from-[#161616] via-transparent to-transparent rounded-t-2xl"></div>
-      <button onclick="closeModal()" class="absolute top-3 right-3 bg-black/60 backdrop-blur text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition-colors text-sm" style="border:1px solid rgba(255,255,255,.1)">✕</button>
-      <div class="absolute bottom-5 left-5 flex gap-2">
+      <button onclick="closeModal()" class="absolute top-3 right-3 bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition-colors text-sm" style="border:1px solid rgba(255,255,255,.1)">✕</button>
+      <div class="absolute bottom-4 left-4 flex gap-2">
         <button id="modal-play-btn" class="btn-primary !text-sm !px-4 !py-2">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           Assistir
         </button>
       </div>
     </div>
-    <div id="modal-body" class="p-6"></div>
+    <div id="modal-body" class="p-4 md:p-6"></div>
   </div>
 </div>
 
-<script>
-// ── CONFIG ────────────────────────────────────────────────────────
-const TMDB_BASE = 'https://api.themoviedb.org/3'
-const TMDB_IMG  = 'https://image.tmdb.org/t/p'
-const SOURCES = {
-  superflix: 'https://superflixapi.cv',
-  warez:     'https://warezcdn.lat',
-}
-let activeSource = 'superflix'
-let TMDB_KEY = '4009df1288679d1a0374fe0a0e0f8419'
 
-// ── STATE ─────────────────────────────────────────────────────────
-let currentView = 'home'
-let searchState = { query: '', type: '', page: 1, totalPages: 1 }
-let tvState     = { id: 0, season: 1, episode: 1, details: null }
-let playerState = { type: '', imdbId: '', tvId: 0 }
-let cache = {}
-
-// ── TMDB API ──────────────────────────────────────────────────────
-async function api(path, params = {}) {
-  const key = path + JSON.stringify(params)
-  if (cache[key]) return cache[key]
-  const url = new URL(TMDB_BASE + path)
-  url.searchParams.set('api_key', TMDB_KEY)
-  url.searchParams.set('language', 'pt-BR')
-  for (const [k, v] of Object.entries(params)) url.searchParams.set(k, String(v))
-  const r = await fetch(url)
-  if (!r.ok) throw new Error(`TMDB ${r.status}`)
-  const data = await r.json()
-  cache[key] = data
-  return data
-}
-
-function imgUrl(path, size = 'w500') {
-  return path ? `${TMDB_IMG}/${size}${path}` : ''
-}
-function getTitle(c) { return c.title || c.name || 'Sem título' }
-function getYear(c)  { const d = c.release_date || c.first_air_date; return d ? d.slice(0,4) : '' }
-function getType(c)  { return (c.media_type === 'movie' || c.title) ? 'movie' : 'tv' }
-
-// ── INIT ──────────────────────────────────────────────────────────
-async function init() {
-  showView('home')
-  renderRowSkeletons()
-
-  const [trending, movies, series, topRated, nowPlaying, animes] = await Promise.all([
-    api('/trending/all/week'),
-    api('/movie/popular'),
-    api('/tv/popular'),
-    api('/movie/top_rated'),
-    api('/movie/now_playing'),
-    api('/discover/tv', { with_genres: '16', with_origin_country: 'JP', sort_by: 'popularity.desc' }),
-  ])
-
-  const heroItems = trending.results.filter(c => c.media_type !== 'person')
-  renderHero(heroItems[Math.floor(Math.random() * Math.min(5, heroItems.length))])
-
-  const rows = document.getElementById('rows')
-  rows.innerHTML = ''
-  renderRow('Em Alta esta Semana', trending.results.filter(c=>c.media_type!=='person'), rows)
-  renderRow('Filmes Populares',    movies.results,   rows, 'movie')
-  renderRow('Em Cartaz nos Cinemas', nowPlaying.results, rows, 'movie')
-  renderRow('Séries Populares',    series.results,   rows, 'tv')
-  renderRow('Mais Bem Avaliados',  topRated.results, rows, 'movie')
-  renderRow('Animes',              animes.results,   rows, 'tv')
-}
-
-function renderRowSkeletons() {
-  const rows = document.getElementById('rows')
-  rows.innerHTML = Array.from({length: 3}).map(() => `
-    <div class="mb-10 px-5 md:px-12">
-      <div class="skeleton h-5 w-40 mb-4 rounded"></div>
-      <div class="flex gap-3 overflow-hidden">
-        ${Array.from({length: 8}).map(() => `
-          <div class="flex-none w-[140px] md:w-[168px]">
-            <div class="skeleton rounded-lg" style="aspect-ratio:2/3"></div>
-          </div>`).join('')}
-      </div>
-    </div>`).join('')
-}
-
-// ── HERO ──────────────────────────────────────────────────────────
-function renderHero(c) {
-  const type = getType(c)
-  const img = document.getElementById('hero-img')
-  img.style.opacity = '0'
-  img.src = imgUrl(c.backdrop_path, 'original')
-  img.onload = () => { img.style.opacity = '1' }
-
-  document.getElementById('hero-title').textContent = getTitle(c)
-  document.getElementById('hero-overview').textContent = c.overview || ''
-  document.getElementById('hero-play').onclick = () => openPlayer(c.id, type)
-  document.getElementById('hero-info').onclick = () => openPlayer(c.id, type)
-
-  const rating = c.vote_average ? c.vote_average.toFixed(1) : null
-  document.getElementById('hero-badges').innerHTML = `
-    <span style="background:rgba(229,9,20,.15);border:1px solid rgba(229,9,20,.3);color:#ff6b6b;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em">
-      ${type === 'movie' ? 'FILME' : 'SÉRIE'}
-    </span>
-    ${rating ? `<span style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);color:#fbbf24;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:flex;align-items:center;gap:4px">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-      ${rating}
-    </span>` : ''}`
-
-  document.getElementById('hero-meta').innerHTML = `
-    ${getYear(c) ? `<span>${getYear(c)}</span><span class="w-1 h-1 rounded-full bg-white/30 inline-block"></span>` : ''}
-    <span class="border border-white/20 px-1.5 py-0.5 text-[10px] rounded font-medium">${c.adult ? '+18' : 'LIVRE'}</span>`
-}
-
-// ── ROWS ──────────────────────────────────────────────────────────
-function renderRow(title, items, container, forcedType) {
-  if (!items.length) return
-  const row = document.createElement('div')
-  row.className = 'row-group relative mb-2 py-6'
-  row.innerHTML = `
-    <h2 class="text-white font-semibold text-base md:text-lg mb-4 px-5 md:px-12 tracking-[-0.01em]">${title}</h2>
-    <div class="relative">
-      <button onclick="scrollRow(this,-1)" class="row-arrow row-arrow-left">
-        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
-        </svg>
-      </button>
-      <div class="row-track flex gap-3 overflow-x-auto scroll-smooth px-5 md:px-12 pb-2 scrollbar-hide">
-        ${items.map(c => cardHTML(c, forcedType)).join('')}
-      </div>
-      <button onclick="scrollRow(this,1)" class="row-arrow row-arrow-right">
-        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-        </svg>
-      </button>
-    </div>`
-  container.appendChild(row)
-}
-
-function scrollRow(btn, dir) {
-  const track = btn.closest('.relative').querySelector('.row-track')
-  track.scrollBy({ left: dir * track.clientWidth * 0.8, behavior: 'smooth' })
-}
-
-function cardHTML(c, forcedType) {
-  const type  = forcedType || getType(c)
-  const poster = imgUrl(c.poster_path, 'w342')
-  const title  = getTitle(c)
-  const year   = getYear(c)
-  const rating = c.vote_average ? c.vote_average.toFixed(1) : null
-  const typeLabel = type === 'movie' ? 'FILME' : 'SÉRIE'
-
-  const img = poster
-    ? `<img src="${poster}" alt="${title}" loading="lazy" onerror="this.parentElement.innerHTML='<div style=width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:8px;color:rgba(255,255,255,.2);font-size:11px;text-align:center>${title}</div>'">`
-    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:8px;color:rgba(255,255,255,.2);font-size:11px;text-align:center">${title}</div>`
-
-  return `
-    <div onclick="openPlayer(${c.id},'${type}')" class="card-wrap">
-      <div class="card-img-wrap">
-        ${img}
-        ${rating ? `<div class="rating-badge"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>${rating}</div>` : ''}
-        <div class="card-overlay">
-          <div class="card-play-btn">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="#000"><path d="M8 5v14l11-7z"/></svg>
-          </div>
-          <p style="font-size:11px;font-weight:600;color:#fff;line-height:1.3;margin:0">${title}</p>
-          ${year ? `<p style="font-size:10px;color:rgba(255,255,255,.5);margin:2px 0 0">${year}</p>` : ''}
-        </div>
-      </div>
-      <p class="mt-2 text-[11px] text-white/55 truncate leading-tight">${title}</p>
-    </div>`
-}
-
-// ── PLAYER ────────────────────────────────────────────────────────
-async function openPlayer(id, type) {
-  activeSource = 'superflix'
-  document.getElementById('source-label').textContent = 'SuperFlix'
-  showView('player')
-  document.getElementById('player-iframe').src = ''
-  document.getElementById('player-title').textContent = 'Carregando...'
-  document.getElementById('episodes-toggle-btn').classList.add('hidden')
-  document.getElementById('episodes-toggle-btn').classList.remove('flex')
-  document.getElementById('episodes-sidebar').classList.add('hidden')
-
-  try {
-    const details = await api(`/${type}/${id}`, { append_to_response: 'external_ids,seasons' })
-    document.getElementById('player-title').textContent = getTitle(details)
-
-    if (type === 'movie') {
-      const imdbId = details.external_ids?.imdb_id
-      if (!imdbId) { document.getElementById('player-title').textContent = 'Não disponível'; return }
-      playerState = { type: 'movie', imdbId }
-      document.getElementById('player-iframe').src = `${SOURCES[activeSource]}/filme/${imdbId}`
-    } else {
-      playerState = { type: 'tv', tvId: id }
-      tvState = { id, season: 1, episode: 1, details }
-      document.getElementById('episodes-toggle-btn').classList.remove('hidden')
-      document.getElementById('episodes-toggle-btn').classList.add('flex')
-      renderSeasonSelect(details)
-      await loadEpisodes(1)
-      playEpisode(1, 1)
-    }
-  } catch(e) {
-    document.getElementById('player-title').textContent = 'Erro ao carregar'
-  }
-}
-
-function playEpisode(season, episode) {
-  tvState.season  = season
-  tvState.episode = episode
-  const details   = tvState.details
-  if (details) {
-    document.getElementById('player-title').textContent =
-      `${getTitle(details)} · T${season} E${episode}`
-  }
-  document.getElementById('player-iframe').src = buildEmbedUrl()
-  highlightEpisode(season, episode)
-}
-
-function closePlayer() {
-  if (document.fullscreenElement) document.exitFullscreen()
-  document.getElementById('player-iframe').src = ''
-  showView('home')
-}
-
-function toggleFullscreen() {
-  const el = document.getElementById('view-player')
-  if (!document.fullscreenElement) {
-    el.requestFullscreen().catch(() => {})
-  } else {
-    document.exitFullscreen()
-  }
-}
-
-document.addEventListener('fullscreenchange', () => {
-  const icon  = document.getElementById('fullscreen-icon')
-  const label = document.getElementById('fullscreen-label')
-  if (!icon || !label) return
-  if (document.fullscreenElement) {
-    icon.innerHTML  = '<path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4m0 5H4m5 0L3 3m18 6V4m0 5h-5m5 0l-6-6M9 15v5m0-5H4m5 5l-6 6m18-6v5m0-5h-5m5 5l-6-6"/>'
-    label.textContent = 'Sair'
-  } else {
-    icon.innerHTML  = '<path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-5V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>'
-    label.textContent = 'Tela cheia'
-  }
-})
-
-function buildEmbedUrl() {
-  if (playerState.type === 'movie') return `${SOURCES[activeSource]}/filme/${playerState.imdbId}`
-  if (playerState.type === 'tv')    return `${SOURCES[activeSource]}/serie/${tvState.id}/${tvState.season}/${tvState.episode}`
-  return ''
-}
-
-function reloadPlayer() {
-  const url = buildEmbedUrl()
-  if (!url) return
-  const iframe = document.getElementById('player-iframe')
-  iframe.src = ''
-  setTimeout(() => { iframe.src = url }, 100)
-}
-
-function toggleSource() {
-  activeSource = activeSource === 'superflix' ? 'warez' : 'superflix'
-  document.getElementById('source-label').textContent =
-    activeSource === 'superflix' ? 'SuperFlix' : 'WarezCDN'
-  reloadPlayer()
-}
-
-function toggleEpisodes() {
-  const sidebar = document.getElementById('episodes-sidebar')
-  sidebar.classList.toggle('hidden')
-  sidebar.classList.toggle('flex')
-  sidebar.classList.toggle('flex-col')
-}
-
-// ── EPISODES ──────────────────────────────────────────────────────
-function renderSeasonSelect(details) {
-  const sel = document.getElementById('season-select')
-  sel.innerHTML = ''
-  const seasons = (details.seasons || []).filter(s => s.season_number > 0)
-  if (!seasons.length) {
-    sel.innerHTML = `<option value="1">Temporada 1</option>`
-    return
-  }
-  seasons.forEach(s => {
-    const opt = document.createElement('option')
-    opt.value = s.season_number
-    opt.textContent = s.name
-    sel.appendChild(opt)
-  })
-}
-
-async function changeSeason(season) {
-  tvState.season = Number(season)
-  await loadEpisodes(Number(season))
-  playEpisode(Number(season), 1)
-}
-
-async function loadEpisodes(season) {
-  const list = document.getElementById('episodes-list')
-  list.innerHTML = `<div class="flex justify-center py-8"><div class="w-6 h-6 border-2 border-[#E50914] border-t-transparent rounded-full animate-spin"></div></div>`
-  try {
-    const data = await api(`/tv/${tvState.id}/season/${season}`)
-    list.innerHTML = data.episodes.map(ep => `
-      <button onclick="playEpisode(${season},${ep.episode_number})"
-        id="ep-${season}-${ep.episode_number}" class="ep-btn">
-        <div class="flex gap-3 items-start">
-          <div class="flex-none relative">
-            ${ep.still_path
-              ? `<img src="${imgUrl(ep.still_path,'w185')}" class="w-[72px] rounded" style="aspect-ratio:16/9;object-fit:cover" loading="lazy">`
-              : `<div class="w-[72px] rounded flex items-center justify-center" style="aspect-ratio:16/9;background:rgba(255,255,255,.05)">
-                  <svg class="w-4 h-4" style="color:rgba(255,255,255,.2)" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                </div>`}
-            <div class="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity" style="background:rgba(0,0,0,.5);border-radius:4px">
-              <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            </div>
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-white text-xs font-semibold truncate leading-tight">${ep.episode_number}. ${ep.name}</p>
-            ${ep.runtime ? `<p class="text-[10px] mt-0.5" style="color:rgba(255,255,255,.3)">${ep.runtime} min</p>` : ''}
-            ${ep.overview ? `<p class="text-[10px] mt-1.5 clamp2 leading-relaxed" style="color:rgba(255,255,255,.4)">${ep.overview}</p>` : ''}
-          </div>
-        </div>
-      </button>`).join('')
-  } catch(e) {
-    list.innerHTML = '<p class="text-center py-6 text-sm" style="color:rgba(255,255,255,.3)">Erro ao carregar episódios</p>'
-  }
-}
-
-function highlightEpisode(season, episode) {
-  document.querySelectorAll('[id^="ep-"]').forEach(el => el.classList.remove('active'))
-  const el = document.getElementById(`ep-${season}-${episode}`)
-  if (el) { el.classList.add('active'); el.scrollIntoView({ block: 'nearest' }) }
-}
-
-// ── SEARCH ────────────────────────────────────────────────────────
-function toggleSearch() {
-  const wrap  = document.getElementById('search-expand-wrap')
-  const input = document.getElementById('search-input')
-  if (!wrap.classList.contains('open')) {
-    wrap.classList.add('open')
-    setTimeout(() => input.focus(), 50)
-  } else {
-    doSearch()
-  }
-}
-
-function closeSearch() {
-  setTimeout(() => {
-    const input = document.getElementById('search-input')
-    if (!input.value) {
-      document.getElementById('search-expand-wrap').classList.remove('open')
-    }
-  }, 200)
-}
-
-function doSearch() {
-  const q = document.getElementById('search-input').value.trim()
-  if (!q) return
-  document.getElementById('search-expand-wrap').classList.remove('open')
-  document.getElementById('search-input').value = ''
-  searchState = { query: q, type: '', page: 1, totalPages: 1 }
-  document.getElementById('search-title').textContent = `"${q}"`
-  document.getElementById('search-count').textContent = ''
-  document.getElementById('search-grid').innerHTML = ''
-  showView('search')
-  loadSearch()
-}
-
-function browseType(type) {
-  const labels = { movie: 'Filmes', tv: 'Séries', anime: 'Animes' }
-  searchState = { query: '', type, page: 1, totalPages: 1 }
-  document.getElementById('search-title').textContent = labels[type] || type
-  document.getElementById('search-count').textContent = ''
-  document.getElementById('search-grid').innerHTML = ''
-  showView('search')
-  loadSearch()
-}
-
-async function loadSearch() {
-  const loading = document.getElementById('search-loading')
-  const empty   = document.getElementById('search-empty')
-  document.getElementById('pagination').classList.add('hidden')
-  loading.classList.remove('hidden')
-  loading.classList.add('flex')
-  empty.classList.add('hidden')
-  empty.classList.remove('flex')
-  document.getElementById('search-grid').innerHTML = ''
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-
-  try {
-    let data
-    const { query, type, page } = searchState
-    if (query) {
-      data = await api('/search/multi', { query, page })
-      data.results = data.results.filter(r => r.media_type !== 'person')
-    } else if (type === 'genre') {
-      data = await api(`/discover/${searchState.mediaType}`, { with_genres: searchState.genreId, sort_by: 'popularity.desc', page })
-    } else if (type === 'anime') {
-      data = await api('/discover/tv', { with_genres:'16', with_origin_country:'JP', sort_by:'popularity.desc', page })
-    } else if (type === 'movie') {
-      data = await api('/movie/popular', { page })
-    } else {
-      data = await api('/tv/popular', { page })
-    }
-
-    searchState.totalPages = Math.min(data.total_pages, 500)
-    const grid = document.getElementById('search-grid')
-
-    if (!data.results.length) {
-      empty.classList.remove('hidden')
-      empty.classList.add('flex')
-    } else {
-      document.getElementById('search-count').textContent = `${data.total_results?.toLocaleString('pt-BR') || ''} resultados`
-      data.results.forEach(c => {
-        const t = type || getType(c)
-        grid.insertAdjacentHTML('beforeend', cardHTML(c, t === 'anime' ? 'tv' : t))
-      })
-      renderPagination()
-    }
-  } catch(e) {
-    console.error(e)
-  } finally {
-    loading.classList.add('hidden')
-    loading.classList.remove('flex')
-  }
-}
-
-function goToPage(page) {
-  searchState.page = page
-  loadSearch()
-}
-
-function renderPagination() {
-  const { page, totalPages } = searchState
-  if (totalPages <= 1) return
-  const el = document.getElementById('pagination')
-  el.classList.remove('hidden')
-  el.classList.add('flex')
-
-  const btn = (label, p, active = false, disabled = false) => `
-    <button onclick="${disabled ? '' : `goToPage(${p})`}"
-      class="page-btn"
-      style="${active   ? 'background:#E50914;color:#fff' :
-              disabled  ? 'color:rgba(255,255,255,.2);cursor:default' :
-                          'background:rgba(255,255,255,.07);color:rgba(255,255,255,.7)'}
-             ${!disabled && !active ? ';hover:background:rgba(255,255,255,.12)' : ''}">
-      ${label}
-    </button>`
-  const dots = `<span class="page-btn" style="color:rgba(255,255,255,.2);cursor:default">…</span>`
-
-  let pages = []
-  pages.push(btn('‹', page - 1, false, page === 1))
-  if (totalPages <= 7) {
-    for (let i = 1; i <= totalPages; i++) pages.push(btn(i, i, i === page))
-  } else {
-    pages.push(btn(1, 1, page === 1))
-    if (page > 3) pages.push(dots)
-    for (let i = Math.max(2, page-1); i <= Math.min(totalPages-1, page+1); i++) pages.push(btn(i, i, i===page))
-    if (page < totalPages - 2) pages.push(dots)
-    pages.push(btn(totalPages, totalPages, page === totalPages))
-  }
-  pages.push(btn('›', page + 1, false, page === totalPages))
-  el.innerHTML = pages.join('')
-}
-
-// ── MODAL ─────────────────────────────────────────────────────────
-function closeModal() {
-  document.getElementById('modal').classList.add('hidden')
-  document.getElementById('modal').classList.remove('flex')
-}
-function closeModalOutside(e) {
-  if (e.target === document.getElementById('modal')) closeModal()
-}
-
-// ── VIEW MANAGEMENT ───────────────────────────────────────────────
-function showView(name) {
-  currentView = name
-  document.getElementById('view-home').classList.toggle('hidden', name !== 'home')
-  document.getElementById('view-search').classList.toggle('hidden', name !== 'search')
-  document.getElementById('view-player').classList.toggle('hidden', name !== 'player')
-
-  const nav      = document.getElementById('navbar')
-  const genreBar = document.getElementById('genre-bar')
-  nav.classList.toggle('hidden', name === 'player')
-  genreBar.classList.toggle('hidden', name === 'player')
-
-  if (name === 'home') {
-    const updateNav = () => {
-      if (window.scrollY > 40) nav.classList.add('scrolled')
-      else nav.classList.remove('scrolled')
-    }
-    updateNav()
-    window.onscroll = updateNav
-  } else {
-    window.onscroll = null
-    nav.style.background = ''
-  }
-}
-
-function showHome() { showView('home') }
-
-// ── GENRES ────────────────────────────────────────────────────────
-const MOVIE_GENRES = [
-  {id:28,name:'Ação'},{id:35,name:'Comédia'},{id:18,name:'Drama'},
-  {id:27,name:'Terror'},{id:878,name:'Ficção Científica'},{id:53,name:'Thriller'},
-  {id:12,name:'Aventura'},{id:16,name:'Animação'},{id:80,name:'Crime'},
-  {id:14,name:'Fantasia'},{id:10749,name:'Romance'},{id:9648,name:'Mistério'},
-  {id:10752,name:'Guerra'},{id:37,name:'Faroeste'},{id:99,name:'Documentário'},
-]
-const TV_GENRES = [
-  {id:10759,name:'Ação & Aventura'},{id:35,name:'Comédia'},{id:18,name:'Drama'},
-  {id:27,name:'Terror'},{id:10765,name:'Ficção Científica'},{id:80,name:'Crime'},
-  {id:9648,name:'Mistério'},{id:16,name:'Animação'},{id:10751,name:'Família'},
-  {id:10764,name:'Reality'},{id:99,name:'Documentário'},{id:10768,name:'Guerra'},
-]
-
-let activeGenreTab = 'movie'
-let activeGenreId  = null
-
-function setGenreTab(tab) {
-  activeGenreTab = tab
-  activeGenreId  = null
-  const on  = 'text-[11px] font-bold px-3.5 py-1 rounded-full border transition-all border-[#E50914] text-white bg-[#E50914]'
-  const off = 'text-[11px] font-bold px-3.5 py-1 rounded-full border transition-all border-white/15 text-white/45'
-  document.getElementById('gtab-movie').className = tab === 'movie' ? on : off
-  document.getElementById('gtab-tv').className    = tab === 'tv'    ? on : off
-  renderGenrePills()
-}
-
-function renderGenrePills() {
-  const genres = activeGenreTab === 'movie' ? MOVIE_GENRES : TV_GENRES
-  document.getElementById('genre-pills').innerHTML = genres.map(g => `
-    <button onclick="browseGenre('${activeGenreTab}',${g.id},'${g.name}')"
-      class="genre-pill ${activeGenreId === g.id ? 'active' : ''}">
-      ${g.name}
-    </button>`).join('')
-}
-
-function browseGenre(mediaType, genreId, genreName) {
-  activeGenreId = genreId
-  renderGenrePills()
-  searchState = { query: '', type: 'genre', genreId, mediaType, page: 1, totalPages: 1 }
-  document.getElementById('search-title').textContent = genreName
-  document.getElementById('search-count').textContent = ''
-  document.getElementById('search-grid').innerHTML = ''
-  showView('search')
-  loadSearch()
-}
-
-// ── AUTH ──────────────────────────────────────────────────────────
-const CREDENTIALS = { user: 'admin', pass: 'lucas' }
-
-function doLogin() {
-  const user = document.getElementById('login-user').value.trim()
-  const pass = document.getElementById('login-pass').value
-  const err  = document.getElementById('login-error')
-
-  if (user === CREDENTIALS.user && pass === CREDENTIALS.pass) {
-    const screen = document.getElementById('login-screen')
-    screen.style.transition = 'opacity .4s'
-    screen.style.opacity = '0'
-    setTimeout(() => screen.classList.add('hidden'), 400)
-    sessionStorage.setItem('lf_auth', '1')
-    err.classList.add('hidden')
-    init()
-  } else {
-    err.classList.remove('hidden')
-    document.getElementById('login-pass').value = ''
-    document.getElementById('login-pass').focus()
-    document.getElementById('login-pass').closest('div').style.animation = 'none'
-    requestAnimationFrame(() => {
-      document.getElementById('login-pass').closest('div').style.animation = 'shake .3s ease'
-    })
-  }
-}
-
-// ── BOOT ──────────────────────────────────────────────────────────
-renderGenrePills()
-if (sessionStorage.getItem('lf_auth') === '1') {
-  document.getElementById('login-screen').classList.add('hidden')
-  init()
-} else {
-  document.getElementById('login-user').focus()
-}
-</script>
-
-<style>
-  @keyframes shake {
-    0%,100% { transform: translateX(0) }
-    20%     { transform: translateX(-6px) }
-    60%     { transform: translateX(6px) }
-  }
-  /* hover:bg-white/8 via inline style doesn't work in TW — override */
-  .nav-link:hover { background: rgba(255,255,255,.07); }
-</style>
+<script src="app.js"></script>
 </body>
 </html>
