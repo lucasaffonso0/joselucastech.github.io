@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LucasFlix</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { lf: { red: '#E50914', dark: '#141414' } },
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background:#141414; color:#fff; font-family:'Inter',sans-serif; }
+    .scrollbar-hide { scrollbar-width:none; -ms-overflow-style:none; }
+    .scrollbar-hide::-webkit-scrollbar { display:none; }
+    .clamp2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .clamp3 { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+    .fade-in { animation: fadeIn .3s ease; }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  </style>
+</head>
+<body>
+
+<!-- ── LOGIN ──────────────────────────────────────────────────────── -->
+<div id="login-screen" class="fixed inset-0 z-[300] bg-[#141414] flex items-center justify-center p-6">
+  <div class="w-full max-w-sm">
+    <div class="flex justify-center mb-8">
+      <svg viewBox="0 0 695.71 330" width="320" role="img" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="680" height="320" fill="#141414" rx="12"/>
+        <defs>
+          <linearGradient id="ls2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#000" stop-opacity="0.6"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></linearGradient>
+          <linearGradient id="rs2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity="0.6"/></linearGradient>
+        </defs>
+        <text x="340" y="210" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="108" font-weight="700" fill="#E50914" letter-spacing="2">LUCASFLIX</text>
+        <rect x="0" y="0" width="80" height="320" fill="url(#ls2)" rx="12"/>
+        <rect x="600" y="0" width="80" height="320" fill="url(#rs2)" rx="12"/>
+        <text x="340" y="265" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="400" fill="#888" letter-spacing="6">ASSISTA SEM LIMITES</text>
+      </svg>
+    </div>
+    <div class="bg-black/60 rounded-xl p-8">
+      <h2 class="text-white text-2xl font-bold mb-6">Entrar</h2>
+      <div class="flex flex-col gap-4">
+        <div>
+          <input id="login-user" type="text" placeholder="Usuário"
+            autocomplete="username"
+            class="w-full bg-[#333] border border-transparent focus:border-[#E50914] text-white text-sm px-4 py-3 rounded outline-none transition-colors placeholder-gray-500"
+            onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()" />
+        </div>
+        <div class="relative">
+          <input id="login-pass" type="password" placeholder="Senha"
+            autocomplete="current-password"
+            class="w-full bg-[#333] border border-transparent focus:border-[#E50914] text-white text-sm px-4 py-3 rounded outline-none transition-colors placeholder-gray-500"
+            onkeydown="if(event.key==='Enter')doLogin()" />
+        </div>
+        <p id="login-error" class="hidden text-[#E50914] text-xs text-center">Usuário ou senha incorretos.</p>
+        <button onclick="doLogin()"
+          class="w-full bg-[#E50914] text-white font-bold py-3 rounded hover:bg-red-700 transition-colors mt-2">
+          Entrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── NAVBAR ──────────────────────────────────────────────────── -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-gradient-to-b from-black/80 to-transparent">
+  <div class="flex items-center justify-between px-4 md:px-12 py-4">
+    <div class="flex items-center gap-8">
+      <button onclick="showHome()" class="shrink-0">
+        <svg viewBox="0 120 696 110" width="150" height="38" role="img" xmlns="http://www.w3.org/2000/svg">
+          <text x="348" y="210" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="108" font-weight="700" fill="#E50914" letter-spacing="2">LUCASFLIX</text>
+        </svg>
+      </button>
+      <div class="hidden md:flex items-center gap-6 text-sm text-gray-300">
+        <button onclick="showHome()" class="hover:text-white transition-colors">Início</button>
+        <button onclick="browseType('movie')" class="hover:text-white transition-colors">Filmes</button>
+        <button onclick="browseType('tv')" class="hover:text-white transition-colors">Séries</button>
+        <button onclick="browseType('anime')" class="hover:text-white transition-colors">Animes</button>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div id="search-wrapper" class="flex items-center">
+        <input id="search-input" type="text" placeholder="Buscar títulos..."
+          class="hidden bg-black/80 border border-white/60 text-white text-sm px-3 py-1.5 rounded mr-2 w-48 md:w-64 outline-none"
+          onkeydown="if(event.key==='Enter')doSearch()" onblur="closeSearch()" />
+        <button onclick="toggleSearch()" class="text-white hover:text-gray-300 transition-colors">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/></svg>
+        </button>
+      </div>
+      <div class="w-8 h-8 rounded bg-[#E50914] flex items-center justify-center text-white text-xs font-bold select-none">L</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── GENRE BAR ────────────────────────────────────────────────── -->
+<div id="genre-bar" class="fixed top-[64px] left-0 right-0 z-40 bg-[#141414]/95 backdrop-blur border-b border-white/5">
+  <div class="px-4 md:px-12 pt-2 pb-1 flex items-center gap-3">
+    <button id="gtab-movie" onclick="setGenreTab('movie')"
+      class="text-xs font-bold px-3 py-1 rounded-full border transition-colors border-[#E50914] text-white bg-[#E50914]">
+      Filmes
+    </button>
+    <button id="gtab-tv" onclick="setGenreTab('tv')"
+      class="text-xs font-bold px-3 py-1 rounded-full border transition-colors border-white/20 text-gray-400">
+      Séries
+    </button>
+  </div>
+  <div id="genre-pills" class="flex gap-2 overflow-x-auto scrollbar-hide px-4 md:px-12 pb-2 pt-1"></div>
+</div>
+
+<!-- ── HOME VIEW ───────────────────────────────────────────────── -->
+<div id="view-home">
+  <!-- Hero -->
+  <div id="hero" class="relative w-full h-[85vh] min-h-[500px] overflow-hidden bg-gray-900">
+    <img id="hero-img" src="" alt="" class="absolute inset-0 w-full h-full object-cover object-top" />
+    <div class="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/30 to-transparent"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-[#141414]/70 to-transparent"></div>
+    <div class="relative h-full flex flex-col justify-end pb-24 px-8 md:px-16 max-w-2xl">
+      <h1 id="hero-title" class="text-4xl md:text-6xl font-black text-white mb-4 leading-tight drop-shadow-2xl"></h1>
+      <p id="hero-overview" class="text-sm md:text-base text-gray-200 mb-6 clamp3 leading-relaxed drop-shadow"></p>
+      <div class="flex items-center gap-3">
+        <button id="hero-play" onclick="" class="flex items-center gap-2 bg-white text-black font-bold px-6 py-2.5 rounded hover:bg-gray-200 transition-colors">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          Assistir
+        </button>
+      </div>
+      <div id="hero-meta" class="flex items-center gap-3 mt-4 text-sm text-gray-300"></div>
+    </div>
+  </div>
+
+  <!-- Rows -->
+  <div id="rows" class="mt-[-80px] relative z-10 pb-12"></div>
+</div>
+
+<!-- ── SEARCH VIEW ─────────────────────────────────────────────── -->
+<div id="view-search" class="hidden pt-36 pb-12 px-4 md:px-12 fade-in">
+  <h1 id="search-title" class="text-white text-2xl font-bold mb-6"></h1>
+  <div id="search-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3"></div>
+  <div id="search-loading" class="hidden flex justify-center py-10">
+    <div class="w-8 h-8 border-2 border-[#E50914] border-t-transparent rounded-full animate-spin"></div>
+  </div>
+  <div id="pagination" class="hidden flex flex-wrap justify-center gap-1 mt-8"></div>
+</div>
+
+<!-- ── PLAYER VIEW ─────────────────────────────────────────────── -->
+<div id="view-player" class="hidden fixed inset-0 z-[100] bg-black flex flex-col fade-in">
+  <div class="flex items-center gap-3 px-4 py-3 bg-black/90 shrink-0">
+    <button onclick="closePlayer()" class="text-white hover:text-gray-300 transition-colors">
+      <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+    <svg onclick="closePlayer()" style="cursor:pointer" viewBox="0 120 696 110" width="120" height="30" role="img" xmlns="http://www.w3.org/2000/svg" class="shrink-0">
+      <text x="348" y="210" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="108" font-weight="700" fill="#E50914" letter-spacing="2">LUCASFLIX</text>
+    </svg>
+    <span id="player-title" class="text-white text-sm truncate"></span>
+    <div class="ml-auto flex items-center gap-2 shrink-0">
+      <button onclick="toggleSource()" id="source-btn"
+        class="flex items-center gap-1.5 bg-white/10 text-white text-sm px-3 py-1.5 rounded hover:bg-white/20 transition-colors">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+        <span id="source-label">SuperFlix</span>
+      </button>
+      <button onclick="reloadPlayer()"
+        class="flex items-center gap-1.5 bg-white/10 text-white text-sm px-3 py-1.5 rounded hover:bg-white/20 transition-colors">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582M20 20v-5h-.581M5.635 19A9 9 0 1 0 4.582 9"/></svg>
+        Recarregar
+      </button>
+    </div>
+    <button id="episodes-toggle-btn" onclick="toggleEpisodes()" class="hidden items-center gap-1.5 bg-white/10 text-white text-sm px-3 py-1.5 rounded hover:bg-white/20 transition-colors shrink-0">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      Episódios
+    </button>
+  </div>
+  <div class="flex flex-1 overflow-hidden">
+    <div class="flex-1 relative">
+      <iframe id="player-iframe" src="" class="w-full h-full min-h-[calc(100vh-56px)]"
+        allowfullscreen allow="fullscreen; autoplay; encrypted-media"
+        referrerpolicy="no-referrer"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-fullscreen allow-presentation allow-modals allow-pointer-lock allow-downloads allow-orientation-lock allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
+        title="Player"></iframe>
+    </div>
+    <div id="episodes-sidebar" class="hidden w-72 md:w-80 h-[calc(100vh-56px)] overflow-hidden border-l border-white/10 shrink-0 flex flex-col bg-[#181818]">
+      <div class="p-4 border-b border-white/10">
+        <h3 class="text-white font-semibold text-sm mb-3">Episódios</h3>
+        <select id="season-select" onchange="changeSeason(this.value)"
+          class="bg-black border border-white/20 text-white text-sm rounded px-3 py-1.5 w-full outline-none"></select>
+      </div>
+      <div id="episodes-list" class="flex-1 overflow-y-auto scrollbar-hide"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL ───────────────────────────────────────────────────── -->
+<div id="modal" class="hidden fixed inset-0 z-[150] bg-black/70 flex items-center justify-center p-4 fade-in" onclick="closeModalOutside(event)">
+  <div class="bg-[#181818] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+    <div class="relative">
+      <img id="modal-backdrop" src="" alt="" class="w-full aspect-video object-cover rounded-t-lg" />
+      <div class="absolute inset-0 bg-gradient-to-t from-[#181818] via-transparent to-transparent rounded-t-lg"></div>
+      <button onclick="closeModal()" class="absolute top-3 right-3 bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition-colors text-sm">✕</button>
+      <div class="absolute bottom-4 left-5">
+        <button id="modal-play-btn" onclick="" class="flex items-center gap-2 bg-white text-black font-bold px-5 py-2 rounded hover:bg-gray-200 transition-colors text-sm">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          Assistir
+        </button>
+      </div>
+    </div>
+    <div id="modal-body" class="p-5"></div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────
+const TMDB_BASE = 'https://api.themoviedb.org/3'
+const TMDB_IMG  = 'https://image.tmdb.org/t/p'
+const SOURCES = {
+  superflix: 'https://superflixapi.cv',
+  warez:     'https://warezcdn.lat',
+}
+let activeSource = 'superflix'
+
+let TMDB_KEY = '4009df1288679d1a0374fe0a0e0f8419'
+
+// ── STATE ─────────────────────────────────────────────────────────
+let currentView = 'home'
+let searchState = { query: '', type: '', page: 1, totalPages: 1 }
+let tvState = { id: 0, season: 1, episode: 1, details: null }
+let playerState = { type: '', imdbId: '', tvId: 0 }
+let cache = {}
+
+
+// ── TMDB API ──────────────────────────────────────────────────────
+async function api(path, params = {}) {
+  const key = path + JSON.stringify(params)
+  if (cache[key]) return cache[key]
+  const url = new URL(TMDB_BASE + path)
+  url.searchParams.set('api_key', TMDB_KEY)
+  url.searchParams.set('language', 'pt-BR')
+  for (const [k, v] of Object.entries(params)) url.searchParams.set(k, String(v))
+  const r = await fetch(url)
+  if (!r.ok) throw new Error(`TMDB ${r.status}`)
+  const data = await r.json()
+  cache[key] = data
+  return data
+}
+
+function imgUrl(path, size = 'w500') {
+  return path ? `${TMDB_IMG}/${size}${path}` : ''
+}
+
+function getTitle(c) { return c.title || c.name || 'Sem título' }
+function getYear(c)  { const d = c.release_date || c.first_air_date; return d ? d.slice(0,4) : '' }
+function getType(c)  { return (c.media_type === 'movie' || c.title) ? 'movie' : 'tv' }
+
+// ── INIT ──────────────────────────────────────────────────────────
+async function init() {
+  showView('home')
+  const [trending, movies, series, topRated, nowPlaying, animes] = await Promise.all([
+    api('/trending/all/week'),
+    api('/movie/popular'),
+    api('/tv/popular'),
+    api('/movie/top_rated'),
+    api('/movie/now_playing'),
+    api('/discover/tv', { with_genres: '16', with_origin_country: 'JP', sort_by: 'popularity.desc' }),
+  ])
+
+  const heroItems = trending.results.filter(c => c.media_type !== 'person')
+  const hero = heroItems[Math.floor(Math.random() * Math.min(5, heroItems.length))]
+  renderHero(hero)
+
+  const rows = document.getElementById('rows')
+  rows.innerHTML = ''
+  renderRow('Em Alta', trending.results.filter(c=>c.media_type!=='person'), rows)
+  renderRow('Filmes Populares', movies.results, rows, 'movie')
+  renderRow('Em Cartaz', nowPlaying.results, rows, 'movie')
+  renderRow('Séries Populares', series.results, rows, 'tv')
+  renderRow('Mais Bem Avaliados', topRated.results, rows, 'movie')
+  renderRow('Animes', animes.results, rows, 'tv')
+}
+
+// ── HERO ──────────────────────────────────────────────────────────
+function renderHero(c) {
+  const type = getType(c)
+  document.getElementById('hero-img').src = imgUrl(c.backdrop_path, 'original')
+  document.getElementById('hero-title').textContent = getTitle(c)
+  document.getElementById('hero-overview').textContent = c.overview || ''
+  document.getElementById('hero-play').onclick = () => openPlayer(c.id, type)
+  document.getElementById('hero-meta').innerHTML =
+    `<span class="border border-gray-400 px-2 py-0.5 text-xs">${c.adult?'+18':'LIVRE'}</span>
+     ${getYear(c)?`<span>${getYear(c)}</span>`:''}
+     <span class="flex items-center gap-1">
+       <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+       ${c.vote_average.toFixed(1)}
+     </span>`
+}
+
+// ── ROWS ──────────────────────────────────────────────────────────
+function renderRow(title, items, container, forcedType) {
+  if (!items.length) return
+  const row = document.createElement('div')
+  row.className = 'relative mb-8 group'
+  row.innerHTML = `
+    <h2 class="text-white font-semibold text-lg md:text-xl mb-3 px-4 md:px-12">${title}</h2>
+    <div class="relative">
+      <button onclick="scrollRow(this,-1)" class="absolute left-0 top-0 bottom-4 z-10 w-10 bg-gradient-to-r from-[#141414] to-transparent flex items-center pl-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <div class="row-track flex gap-2 overflow-x-auto scroll-smooth px-4 md:px-12 pb-4 scrollbar-hide">
+        ${items.map(c => cardHTML(c, forcedType)).join('')}
+      </div>
+      <button onclick="scrollRow(this,1)" class="absolute right-0 top-0 bottom-4 z-10 w-10 bg-gradient-to-l from-[#141414] to-transparent flex items-center justify-end pr-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>`
+  container.appendChild(row)
+}
+
+function scrollRow(btn, dir) {
+  const track = btn.closest('.relative').querySelector('.row-track')
+  track.scrollBy({ left: dir * track.clientWidth * 0.75, behavior: 'smooth' })
+}
+
+function cardHTML(c, forcedType) {
+  const type = forcedType || getType(c)
+  const poster = imgUrl(c.poster_path, 'w342')
+  const title = getTitle(c)
+  const year = getYear(c)
+  const img = poster
+    ? `<img src="${poster}" alt="${title}" class="w-full h-full object-cover transition-transform duration-300 group-hover/card:scale-110" loading="lazy" onerror="this.style.display='none'">`
+    : `<div class="w-full h-full flex items-center justify-center text-gray-500 text-xs text-center p-2">${title}</div>`
+
+  return `
+    <div onclick="openPlayer(${c.id},'${type}')" class="relative flex-none w-32 md:w-40 cursor-pointer group/card">
+      <div class="overflow-hidden rounded-md aspect-[2/3] bg-gray-800">
+        ${img}
+        <div class="absolute inset-0 bg-black/0 group-hover/card:bg-black/40 transition-all duration-300 rounded-md flex items-center justify-center">
+          <svg class="w-12 h-12 text-white opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+      </div>
+      <p class="mt-1.5 text-xs text-gray-300 truncate">${title}</p>
+      ${year ? `<p class="text-xs text-gray-500">${year}</p>` : ''}
+    </div>`
+}
+
+// ── PLAYER ────────────────────────────────────────────────────────
+async function openPlayer(id, type) {
+  activeSource = 'superflix'
+  document.getElementById('source-label').textContent = 'SuperFlix'
+  showView('player')
+  document.getElementById('player-iframe').src = ''
+  document.getElementById('player-title').textContent = 'Carregando...'
+  document.getElementById('episodes-toggle-btn').classList.add('hidden')
+  document.getElementById('episodes-toggle-btn').classList.remove('flex')
+  document.getElementById('episodes-sidebar').classList.add('hidden')
+
+  try {
+    const details = await api(`/${type}/${id}`, { append_to_response: 'external_ids,seasons' })
+    document.getElementById('player-title').textContent = getTitle(details)
+
+    if (type === 'movie') {
+      const imdbId = details.external_ids?.imdb_id
+      if (!imdbId) { document.getElementById('player-title').textContent = 'Não disponível'; return }
+      playerState = { type: 'movie', imdbId }
+      document.getElementById('player-iframe').src = `${SOURCES[activeSource]}/filme/${imdbId}`
+    } else {
+      playerState = { type: 'tv', tvId: id }
+      tvState = { id, season: 1, episode: 1, details }
+      document.getElementById('episodes-toggle-btn').classList.remove('hidden')
+      document.getElementById('episodes-toggle-btn').classList.add('flex')
+      renderSeasonSelect(details)
+      await loadEpisodes(1)
+      playEpisode(1, 1)
+    }
+  } catch(e) {
+    document.getElementById('player-title').textContent = 'Erro ao carregar'
+  }
+}
+
+function playEpisode(season, episode) {
+  tvState.season = season
+  tvState.episode = episode
+  const details = tvState.details
+  if (details) {
+    document.getElementById('player-title').textContent =
+      `${getTitle(details)} — T${season}:E${episode}`
+  }
+  document.getElementById('player-iframe').src = buildEmbedUrl()
+  highlightEpisode(season, episode)
+}
+
+function closePlayer() {
+  document.getElementById('player-iframe').src = ''
+  showView('home')
+}
+
+function buildEmbedUrl() {
+  if (playerState.type === 'movie') return `${SOURCES[activeSource]}/filme/${playerState.imdbId}`
+  if (playerState.type === 'tv')    return `${SOURCES[activeSource]}/serie/${tvState.id}/${tvState.season}/${tvState.episode}`
+  return ''
+}
+
+function reloadPlayer() {
+  const url = buildEmbedUrl()
+  if (!url) return
+  const iframe = document.getElementById('player-iframe')
+  iframe.src = ''
+  setTimeout(() => { iframe.src = url }, 100)
+}
+
+function toggleSource() {
+  activeSource = activeSource === 'superflix' ? 'warez' : 'superflix'
+  document.getElementById('source-label').textContent =
+    activeSource === 'superflix' ? 'SuperFlix' : 'WarezCDN'
+  reloadPlayer()
+}
+
+function toggleEpisodes() {
+  const sidebar = document.getElementById('episodes-sidebar')
+  sidebar.classList.toggle('hidden')
+  sidebar.classList.toggle('flex')
+  sidebar.classList.toggle('flex-col')
+}
+
+// ── EPISODE SELECTOR ──────────────────────────────────────────────
+function renderSeasonSelect(details) {
+  const sel = document.getElementById('season-select')
+  sel.innerHTML = ''
+  const seasons = (details.seasons || []).filter(s => s.season_number > 0)
+  if (!seasons.length) {
+    sel.innerHTML = `<option value="1">Temporada 1</option>`
+    return
+  }
+  seasons.forEach(s => {
+    const opt = document.createElement('option')
+    opt.value = s.season_number
+    opt.textContent = s.name
+    sel.appendChild(opt)
+  })
+}
+
+async function changeSeason(season) {
+  tvState.season = Number(season)
+  await loadEpisodes(Number(season))
+  playEpisode(Number(season), 1)
+}
+
+async function loadEpisodes(season) {
+  const list = document.getElementById('episodes-list')
+  list.innerHTML = '<div class="flex justify-center py-6"><div class="w-6 h-6 border-2 border-[#E50914] border-t-transparent rounded-full animate-spin"></div></div>'
+  try {
+    const data = await api(`/tv/${tvState.id}/season/${season}`)
+    list.innerHTML = data.episodes.map(ep => `
+      <button onclick="playEpisode(${season},${ep.episode_number})"
+        id="ep-${season}-${ep.episode_number}"
+        class="w-full text-left p-3 border-b border-white/5 hover:bg-white/5 transition-colors">
+        <div class="flex gap-3 items-start">
+          ${ep.still_path
+            ? `<img src="${imgUrl(ep.still_path,'w185')}" class="w-20 aspect-video object-cover rounded flex-none" loading="lazy">`
+            : `<div class="w-20 aspect-video bg-gray-700 rounded flex-none flex items-center justify-center"><svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>`}
+          <div class="flex-1 min-w-0">
+            <p class="text-white text-xs font-medium truncate">${ep.episode_number}. ${ep.name}</p>
+            ${ep.runtime ? `<p class="text-gray-500 text-xs">${ep.runtime}min</p>` : ''}
+            ${ep.overview ? `<p class="text-gray-400 text-xs mt-1 clamp2 leading-relaxed">${ep.overview}</p>` : ''}
+          </div>
+        </div>
+      </button>`).join('')
+  } catch(e) {
+    list.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">Erro ao carregar episódios</p>'
+  }
+}
+
+function highlightEpisode(season, episode) {
+  document.querySelectorAll('[id^="ep-"]').forEach(el => {
+    el.classList.remove('bg-white/10', 'border-l-2', 'border-l-[#E50914]')
+  })
+  const el = document.getElementById(`ep-${season}-${episode}`)
+  if (el) el.classList.add('bg-white/10', 'border-l-2', 'border-l-[#E50914]')
+}
+
+// ── SEARCH ────────────────────────────────────────────────────────
+function toggleSearch() {
+  const input = document.getElementById('search-input')
+  if (input.classList.contains('hidden')) {
+    input.classList.remove('hidden')
+    input.focus()
+  } else {
+    doSearch()
+  }
+}
+
+function closeSearch() {
+  setTimeout(() => {
+    const input = document.getElementById('search-input')
+    if (!input.value) input.classList.add('hidden')
+  }, 200)
+}
+
+function doSearch() {
+  const q = document.getElementById('search-input').value.trim()
+  if (!q) return
+  document.getElementById('search-input').classList.add('hidden')
+  document.getElementById('search-input').value = ''
+  searchState = { query: q, type: '', page: 1, totalPages: 1 }
+  document.getElementById('search-title').textContent = `Resultados para "${q}"`
+  document.getElementById('search-grid').innerHTML = ''
+  showView('search')
+  loadSearch()
+}
+
+function browseType(type) {
+  const labels = { movie: 'Filmes', tv: 'Séries', anime: 'Animes' }
+  searchState = { query: '', type, page: 1, totalPages: 1 }
+  document.getElementById('search-title').textContent = labels[type] || type
+  document.getElementById('search-grid').innerHTML = ''
+  showView('search')
+  loadSearch()
+}
+
+async function loadSearch() {
+  const loading = document.getElementById('search-loading')
+  document.getElementById('pagination').classList.add('hidden')
+  loading.classList.remove('hidden')
+  document.getElementById('search-grid').innerHTML = ''
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+
+  try {
+    let data
+    const { query, type, page } = searchState
+    if (query) {
+      data = await api('/search/multi', { query, page })
+      data.results = data.results.filter(r => r.media_type !== 'person')
+    } else if (type === 'genre') {
+      data = await api(`/discover/${searchState.mediaType}`, { with_genres: searchState.genreId, sort_by: 'popularity.desc', page })
+    } else if (type === 'anime') {
+      data = await api('/discover/tv', { with_genres:'16', with_origin_country:'JP', sort_by:'popularity.desc', page })
+    } else if (type === 'movie') {
+      data = await api('/movie/popular', { page })
+    } else {
+      data = await api('/tv/popular', { page })
+    }
+
+    searchState.totalPages = Math.min(data.total_pages, 500)
+    const grid = document.getElementById('search-grid')
+    data.results.forEach(c => {
+      const t = type || getType(c)
+      grid.insertAdjacentHTML('beforeend', cardHTML(c, t === 'anime' ? 'tv' : t))
+    })
+
+    renderPagination()
+  } catch(e) {
+    console.error(e)
+  } finally {
+    loading.classList.add('hidden')
+  }
+}
+
+function goToPage(page) {
+  searchState.page = page
+  loadSearch()
+}
+
+function renderPagination() {
+  const { page, totalPages } = searchState
+  if (totalPages <= 1) return
+  const el = document.getElementById('pagination')
+  el.classList.remove('hidden')
+
+  const btn = (label, p, active = false, disabled = false) => `
+    <button onclick="${disabled ? '' : `goToPage(${p})`}"
+      class="min-w-[36px] h-9 px-2 rounded text-sm font-medium transition-colors
+        ${active   ? 'bg-[#E50914] text-white'           : ''}
+        ${disabled ? 'text-gray-600 cursor-default'       : ''}
+        ${!active && !disabled ? 'bg-white/10 text-gray-300 hover:bg-white/20' : ''}">
+      ${label}
+    </button>`
+
+  const dots = `<span class="min-w-[36px] h-9 flex items-center justify-center text-gray-600 text-sm">…</span>`
+
+  let pages = []
+  pages.push(btn('‹', page - 1, false, page === 1))
+
+  if (totalPages <= 7) {
+    for (let i = 1; i <= totalPages; i++) pages.push(btn(i, i, i === page))
+  } else {
+    pages.push(btn(1, 1, page === 1))
+    if (page > 3) pages.push(dots)
+    for (let i = Math.max(2, page - 1); i <= Math.min(totalPages - 1, page + 1); i++) {
+      pages.push(btn(i, i, i === page))
+    }
+    if (page < totalPages - 2) pages.push(dots)
+    pages.push(btn(totalPages, totalPages, page === totalPages))
+  }
+
+  pages.push(btn('›', page + 1, false, page === totalPages))
+  el.innerHTML = pages.join('')
+}
+
+// ── MODAL (detail panel) ──────────────────────────────────────────
+// (modal not used in click path — player opens directly)
+function closeModal() {
+  document.getElementById('modal').classList.add('hidden')
+  document.getElementById('modal').classList.remove('flex')
+}
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modal')) closeModal()
+}
+
+// ── VIEW MANAGEMENT ───────────────────────────────────────────────
+function showView(name) {
+  currentView = name
+  document.getElementById('view-home').classList.toggle('hidden', name !== 'home')
+  document.getElementById('view-search').classList.toggle('hidden', name !== 'search')
+  document.getElementById('view-player').classList.toggle('hidden', name !== 'player')
+
+  const nav = document.getElementById('navbar')
+  const genreBar = document.getElementById('genre-bar')
+  nav.classList.toggle('hidden', name === 'player')
+  genreBar.classList.toggle('hidden', name === 'player')
+
+  // Navbar bg on home
+  if (name === 'home') {
+    window.onscroll = () => {
+      nav.style.background = window.scrollY > 20
+        ? '#141414'
+        : 'linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)'
+    }
+  } else {
+    nav.style.background = '#141414'
+    window.onscroll = null
+  }
+}
+
+function showHome() {
+  showView('home')
+}
+
+// ── GENRES ────────────────────────────────────────────────────────
+const MOVIE_GENRES = [
+  {id:28,name:'Ação'},{id:35,name:'Comédia'},{id:18,name:'Drama'},
+  {id:27,name:'Terror'},{id:878,name:'Ficção Científica'},{id:53,name:'Thriller'},
+  {id:12,name:'Aventura'},{id:16,name:'Animação'},{id:80,name:'Crime'},
+  {id:14,name:'Fantasia'},{id:10749,name:'Romance'},{id:9648,name:'Mistério'},
+  {id:10752,name:'Guerra'},{id:37,name:'Faroeste'},{id:99,name:'Documentário'},
+]
+const TV_GENRES = [
+  {id:10759,name:'Ação & Aventura'},{id:35,name:'Comédia'},{id:18,name:'Drama'},
+  {id:27,name:'Terror'},{id:10765,name:'Ficção Científica'},{id:80,name:'Crime'},
+  {id:9648,name:'Mistério'},{id:16,name:'Animação'},{id:10751,name:'Família'},
+  {id:10764,name:'Reality'},{id:99,name:'Documentário'},{id:10768,name:'Guerra'},
+]
+
+let activeGenreTab = 'movie'
+let activeGenreId = null
+
+function setGenreTab(tab) {
+  activeGenreTab = tab
+  activeGenreId = null
+  document.getElementById('gtab-movie').className = `text-xs font-bold px-3 py-1 rounded-full border transition-colors ${tab==='movie' ? 'border-[#E50914] text-white bg-[#E50914]' : 'border-white/20 text-gray-400'}`
+  document.getElementById('gtab-tv').className    = `text-xs font-bold px-3 py-1 rounded-full border transition-colors ${tab==='tv'    ? 'border-[#E50914] text-white bg-[#E50914]' : 'border-white/20 text-gray-400'}`
+  renderGenrePills()
+}
+
+function renderGenrePills() {
+  const genres = activeGenreTab === 'movie' ? MOVIE_GENRES : TV_GENRES
+  const pills = document.getElementById('genre-pills')
+  pills.innerHTML = genres.map(g => `
+    <button onclick="browseGenre('${activeGenreTab}',${g.id},'${g.name}')"
+      class="flex-none text-xs px-3 py-1 rounded-full border transition-colors whitespace-nowrap
+        ${activeGenreId===g.id ? 'bg-white text-black border-white font-bold' : 'border-white/20 text-gray-300 hover:border-white/50 hover:text-white'}">
+      ${g.name}
+    </button>`).join('')
+}
+
+function browseGenre(mediaType, genreId, genreName) {
+  activeGenreId = genreId
+  renderGenrePills()
+  searchState = { query: '', type: 'genre', genreId, mediaType, page: 1, totalPages: 1 }
+  document.getElementById('search-title').textContent = genreName
+  document.getElementById('search-grid').innerHTML = ''
+  showView('search')
+  loadSearch()
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────
+const CREDENTIALS = { user: 'lucas', pass: 'lucas@gostosinho' }
+
+function doLogin() {
+  const user = document.getElementById('login-user').value.trim()
+  const pass = document.getElementById('login-pass').value
+  const err  = document.getElementById('login-error')
+
+  if (user === CREDENTIALS.user && pass === CREDENTIALS.pass) {
+    sessionStorage.setItem('lf_auth', '1')
+    document.getElementById('login-screen').classList.add('hidden')
+    err.classList.add('hidden')
+    init()
+  } else {
+    err.classList.remove('hidden')
+    document.getElementById('login-pass').value = ''
+    document.getElementById('login-pass').focus()
+  }
+}
+
+// ── BOOT ──────────────────────────────────────────────────────────
+renderGenrePills()
+if (sessionStorage.getItem('lf_auth') === '1') {
+  document.getElementById('login-screen').classList.add('hidden')
+  init()
+} else {
+  document.getElementById('login-user').focus()
+}
+</script>
+</body>
+</html>
