@@ -405,7 +405,7 @@ document.addEventListener('fullscreenchange', () => {
 function buildEmbedUrl() {
   const src = SOURCES[activeSourceIdx].key
   if (playerState.type === 'movie') {
-    //if (src === 'redetoons') return `https://proxy.redetoons.me/p/beta/movie/${playerState.id}`
+    // if (src === 'redetoons') return `https://proxy.redetoons.me/p/beta/movie/${playerState.id}`
     if (src === 'redetoons') return `https://redetoons.lol/watch/filme?id=${playerState.id}&type=movie`
     const base = src === 'superflix' ? 'https://superflixapi.fit' : 'https://warezcdn.lat'
     return playerState.imdbId ? `${base}/filme/${playerState.imdbId}` : ''
