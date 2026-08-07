@@ -6,6 +6,7 @@ const SOURCES = [
   { key: 'superflix', label: 'Server 2' },
   { key: 'warez',     label: 'Server 3' },
   { key: 'vidflix',   label: 'Server 4 (EN)' },
+  { key: 'moviesapi', label: 'Server 5 (EN)' },
 ]
 let activeSourceIdx = 0
 let TMDB_KEY = atob('NDAwOWRmMTI4ODY3OWQxYTAzNzRmZTBhMGUwZjg0MTk=')
@@ -409,6 +410,7 @@ function buildEmbedUrl() {
     // if (src === 'redetoons') return `https://proxy.redetoons.me/p/beta/movie/${playerState.id}`
     if (src === 'redetoons') return `https://redetoons.lol/watch/filme?id=${playerState.id}&type=movie`
     if (src === 'vidflix') return `https://vidflix.club/movie/${playerState.id}`
+    if (src === 'moviesapi') return `https://moviesapi.to/movie/${playerState.id}`
     const base = src === 'superflix' ? 'https://superflixapi.fit' : 'https://warezcdn.lat'
     return playerState.imdbId ? `${base}/filme/${playerState.imdbId}` : ''
   }
@@ -417,6 +419,7 @@ function buildEmbedUrl() {
     if (src === 'redetoons') return `https://redetoons.lol/watch/t${tvState.season}-ep${tvState.episode}/filme?id=${tvState.id}&type=tv`
     // if (src === 'redetoons') return `https://proxy.redetoons.me/p/beta/tv/${tvState.id}/${tvState.season}/${tvState.episode}`
     if (src === 'vidflix') return `https://vidflix.club/tv/${tvState.id}/${tvState.season}/${tvState.episode}`
+    if (src === 'moviesapi') return `https://moviesapi.to/tv/${tvState.id}/${tvState.season}/${tvState.episode}`
     const base = src === 'superflix' ? 'https://superflixapi.fit' : 'https://warezcdn.lat'
     return `${base}/serie/${tvState.id}/${tvState.season}/${tvState.episode}`
   }
