@@ -2,12 +2,16 @@
 const TMDB_BASE = 'https://api.themoviedb.org/3'
 const TMDB_IMG  = 'https://image.tmdb.org/t/p'
 const SOURCES = [
-  { key: 'redetoons', label: 'Server 1' },
-  { key: 'superflix', label: 'Server 2' },
-  { key: 'warez',     label: 'Server 3' },
-  { key: 'vidflix',   label: 'Server 4 (EN)' },
-  { key: 'moviesapi', label: 'Server 5 (EN)' },
+  { key: 'redetoons', label: 'Servidor 1', group: 'pt' },
+  { key: 'superflix', label: 'Servidor 2', group: 'pt' },
+  { key: 'warez',     label: 'Servidor 3', group: 'pt' },
+  { key: 'vidflix',   label: 'Servidor 4', group: 'en' },
+  { key: 'moviesapi', label: 'Servidor 5', group: 'en' },
 ]
+const SOURCE_GROUP_LABELS = {
+  pt: '🇧🇷 Dublado / Legendado',
+  en: '🇺🇸 Áudio original (EN)',
+}
 let activeSourceIdx = 0
 let TMDB_KEY = atob('NDAwOWRmMTI4ODY3OWQxYTAzNzRmZTBhMGUwZjg0MTk=')
 
@@ -457,14 +461,63 @@ function reloadPlayer() {
   }, 100)
 }
 
-function toggleSource() {
-  activeSourceIdx = (activeSourceIdx + 1) % SOURCES.length
-  const label = SOURCES[activeSourceIdx].label
+function buildSourceMenuHTML() {
+  let html = ''
+  let lastGroup = null
+  SOURCES.forEach((s, i) => {
+    if (s.group !== lastGroup) {
+      html += `<div class="px-3 pt-2.5 pb-1 text-[10px] font-semibold uppercase tracking-wide text-white/35">${SOURCE_GROUP_LABELS[s.group] || ''}</div>`
+      lastGroup = s.group
+    }
+    const active = i === activeSourceIdx
+    html += `
+      <button onclick="selectSource(${i})" class="w-full flex items-center justify-between gap-2 px-3 py-2 text-sm transition-colors ${active ? 'text-white bg-white/8' : 'text-white/75 hover:bg-white/8 hover:text-white'}">
+        <span>${s.label}</span>
+        <svg class="w-3.5 h-3.5 shrink-0 ${active ? '' : 'invisible'}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+      </button>`
+  })
+  return html
+}
+
+function renderSourceMenus() {
+  const html = buildSourceMenuHTML()
+  const menu    = document.getElementById('source-menu')
+  const navMenu = document.getElementById('nav-source-menu')
+  if (menu)    menu.innerHTML    = html
+  if (navMenu) navMenu.innerHTML = html
+}
+
+function closeAllSourceMenus() {
+  document.getElementById('source-menu')?.classList.add('hidden')
+  document.getElementById('nav-source-menu')?.classList.add('hidden')
+  document.getElementById('source-chevron')?.classList.remove('rotate-180')
+  document.getElementById('nav-source-chevron')?.classList.remove('rotate-180')
+}
+
+function toggleSourceMenu(menuId, chevronId) {
+  const menu = document.getElementById(menuId)
+  const wasOpen = !menu.classList.contains('hidden')
+  closeAllSourceMenus()
+  if (!wasOpen) {
+    menu.classList.remove('hidden')
+    document.getElementById(chevronId)?.classList.add('rotate-180')
+  }
+}
+
+function selectSource(idx) {
+  activeSourceIdx = idx
+  const label = SOURCES[idx].label
   document.getElementById('source-label').textContent = label
   const nav = document.getElementById('nav-source-label')
   if (nav) nav.textContent = label
+  renderSourceMenus()
+  closeAllSourceMenus()
   reloadPlayer()
 }
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#source-dropdown') && !e.target.closest('#nav-source-dropdown')) closeAllSourceMenus()
+})
 
 function toggleEpisodes() {
   const sidebar = document.getElementById('episodes-sidebar')
@@ -844,11 +897,13 @@ function doLogin() {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     if (!document.getElementById('modal').classList.contains('hidden')) closeModal()
+    closeAllSourceMenus()
   }
 })
 
 // ── BOOT ──────────────────────────────────────────────────────────
 renderGenrePills()
+renderSourceMenus()
 setActiveNav('nav-home')
 const _authTs = parseInt(localStorage.getItem('lf_auth') || '0', 10)
 const _authValid = _authTs > 0 && (Date.now() - _authTs) < 24 * 60 * 60 * 1000
