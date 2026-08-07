@@ -411,7 +411,9 @@ function buildEmbedUrl() {
     return playerState.imdbId ? `${base}/filme/${playerState.imdbId}` : ''
   }
   if (playerState.type === 'tv') {
-    if (src === 'redetoons') return `https://proxy.redetoons.me/p/beta/tv/${tvState.id}/${tvState.season}/${tvState.episode}`
+    https://redetoons.lol/watch/t1-ep1/avatar-o-ultimo-mestre-do-ar?id=82452&type=tv
+    if (src === 'redetoons') return `https://redetoons.lol/watch/t${tvState.season}-ep${tvState.episode}/filme?id=${tvState.id}&type=tv`
+    // if (src === 'redetoons') return `https://proxy.redetoons.me/p/beta/tv/${tvState.id}/${tvState.season}/${tvState.episode}`
     const base = src === 'superflix' ? 'https://superflixapi.fit' : 'https://warezcdn.lat'
     return `${base}/serie/${tvState.id}/${tvState.season}/${tvState.episode}`
   }
