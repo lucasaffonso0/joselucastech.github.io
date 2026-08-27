@@ -1,30 +1,23 @@
-/* ─── Effects & Animations ───────────────────────────────────── */
+/* ─── Effects ─────────────────────────────────────────────────── */
 
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #00ff88 0%, #00d4ff 50%, #7c3aed 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Hero duotone glow */
+.hero-glow {
+  background:
+    radial-gradient(55% 50% at 15% 5%, rgb(var(--c-accent) / 0.12) 0%, transparent 60%),
+    radial-gradient(45% 40% at 90% 25%, rgb(var(--c-flare) / 0.07) 0%, transparent 60%);
 }
 
-/* Glow utilities */
-.glow-green { box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); }
-.glow-cyan  { box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
-
-/* Hero background grid */
-.hero-grid {
-  background-image:
-    linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
+/* Contact section closing glow */
+.contact-glow {
+  background:
+    radial-gradient(60% 70% at 50% 0%, rgb(var(--c-accent) / 0.10) 0%, transparent 65%);
 }
 
 /* Scroll-triggered section reveal */
 .section-reveal {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 .section-reveal.visible {
   opacity: 1;
