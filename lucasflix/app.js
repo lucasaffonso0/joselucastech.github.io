@@ -412,15 +412,15 @@ function buildEmbedUrl() {
   const src = SOURCES[activeSourceIdx].key
   if (playerState.type === 'movie') {
     // if (src === 'redetoons') return `https://proxy.redetoons.me/p/beta/movie/${playerState.id}`
-    if (src === 'redetoons') return `https://redetoons.lol/watch/filme?id=${playerState.id}&type=movie`
+    if (src === 'redetoons') return `https://redetoons.bond/watch/filme?id=${playerState.id}&type=movie`
     if (src === 'vidflix') return `https://vidflix.club/movie/${playerState.id}`
     if (src === 'moviesapi') return `https://moviesapi.to/movie/${playerState.id}`
     const base = src === 'superflix' ? 'https://superflixapi.fit' : 'https://warezcdn.lat'
     return playerState.imdbId ? `${base}/filme/${playerState.imdbId}` : ''
   }
   if (playerState.type === 'tv') {
-    https://redetoons.lol/watch/t1-ep1/avatar-o-ultimo-mestre-do-ar?id=82452&type=tv
-    if (src === 'redetoons') return `https://redetoons.lol/watch/t${tvState.season}-ep${tvState.episode}/filme?id=${tvState.id}&type=tv`
+    https://redetoons.bond/watch/t1-ep1/avatar-o-ultimo-mestre-do-ar?id=82452&type=tv
+    if (src === 'redetoons') return `https://redetoons.bond/watch/t${tvState.season}-ep${tvState.episode}/filme?id=${tvState.id}&type=tv`
     // if (src === 'redetoons') return `https://proxy.redetoons.me/p/beta/tv/${tvState.id}/${tvState.season}/${tvState.episode}`
     if (src === 'vidflix') return `https://vidflix.club/tv/${tvState.id}/${tvState.season}/${tvState.episode}`
     if (src === 'moviesapi') return `https://moviesapi.to/tv/${tvState.id}/${tvState.season}/${tvState.episode}`
